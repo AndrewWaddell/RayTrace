@@ -1,9 +1,9 @@
 public class Shape {
-    public static void changeOfBasis(){
+    public void changeOfBasis(){
         //can I talk to other classes?
 
     }
-    public static void matrixManipulation(int s){
+    public void matrixManipulation(int s){
         int[][] sqMatrix = new int[s][s];
         System.out.println("My zeroed matrix:");
         for (int i = 0; i < s; i++){

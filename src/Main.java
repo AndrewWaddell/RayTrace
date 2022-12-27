@@ -5,16 +5,12 @@ public class Main {
         Matrix2d mat3 = new Matrix2d();
 
         int[] size = {2,2};
-        float[] row = {3,3};
-        int[] num = {0,1,2};
-
-        mat1.createEmpty(size);
-        mat1.populateRow(num[0],row);
-        mat1.populateRow(num[1],row);
-        System.out.println("three squared is not 81");
-        mat1.raisePower(num[2]);
-        mat1.print();
-
+        float[][] vals1 = {{3,7},{4,9}};
+        float[][] vals2 = {{6,2},{5,8}};
+        mat1.create(vals1);
+        mat2.create(vals2);
+        mat3.create(mat1.multiply(mat2));
+        mat3.print();
 
     }
     public static void traceFrame(){

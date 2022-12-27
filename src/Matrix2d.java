@@ -142,7 +142,7 @@ public class Matrix2d {
         ones.createEmpty(size);
         float one = 1;
         ones.fillWithItem(one);
-        float[][] result = ones.vals;
+        float[][] result = ones.vals.clone();
         if (POWER<0){
             for (int power=0;power>POWER;power--) {
                 for (int i = 0; i < numRows; i++) {
@@ -152,17 +152,35 @@ public class Matrix2d {
                 }
             }
         } else if (POWER>0) {
-            result = vals; // is this referencing the same object?
-            for (int power=1;power<POWER;power++) {
+            for (int power=0;power<POWER;power++) {
                 for (int i = 0; i < numRows; i++) {
                     for (int j = 0; j < numCols; j++) {
                         result[i][j] = result[i][j] * vals[i][j];
-                        this.print(); // these values shouldn't be changing right?
                     }
                 }
             }
         }
         return result;
     }
-
+    public float[][] multiply(Matrix2d inMat){
+        if (!created){
+            System.out.println("Matrix not created");
+            float[][] zero = new float[1][1];
+            return zero;
+        }
+        if (numCols != inMat.numRows){
+            System.out.println("Matrix dimensions not compatible for multiplication");
+            float[][] zero = new float[1][1];
+            return zero;
+        }
+        float[][] product = new float[numRows][inMat.numCols];
+        for (int i=0;i<numRows;i++){
+            for (int j=0;j<inMat.numCols;j++){
+                for (int k=0;k<numCols;k++){
+                    product[i][j] += vals[i][k] * inMat.vals[k][j];
+                }
+            }
+        }
+        return product;
+    }
 }

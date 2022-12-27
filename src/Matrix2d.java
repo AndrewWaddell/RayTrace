@@ -152,11 +152,12 @@ public class Matrix2d {
                 }
             }
         } else if (POWER>0) {
-            result = vals;
+            result = vals; // is this referencing the same object?
             for (int power=1;power<POWER;power++) {
                 for (int i = 0; i < numRows; i++) {
                     for (int j = 0; j < numCols; j++) {
                         result[i][j] = result[i][j] * vals[i][j];
+                        this.print(); // these values shouldn't be changing right?
                     }
                 }
             }

@@ -5,17 +5,20 @@ public class Matrix2d {
     int numRows;
     int numCols;
     float[][] vals;
-    public Matrix2d(float[][] inMat){
-        vals = inMat;
-        numRows = inMat.length;
-        numCols = inMat[0].length;
-        size = new int[]{numRows,numCols};
-    }
-    public void createEmpty(int[] sizeInput){
-        size = sizeInput;
-        numRows = size[0];
-        numCols = size[1];
-        vals = new float[numRows][numCols];
+    public Matrix2d(Object... Varin){
+        // if size is given, then create an empty matrix
+        if (Varin[0] instanceof float[][]) { // matrix is given
+            vals = (float[][]) Varin[0];
+            numRows = vals.length;
+            numCols = vals[0].length;
+            size = new int[]{numRows, numCols};
+        } else if (Varin[0] instanceof float[]) { // size is given
+            // creates empty matrix
+            size = (int[]) Varin[0];
+            numRows = size[0];
+            numCols = size[1];
+            vals = new float[numRows][numCols];
+        }
     }
 
     public void populateRow(int i, float[] row){
@@ -94,7 +97,7 @@ public class Matrix2d {
     public float[][] raisePower(int POWER){
         float[][] test = {{}};
         Matrix2d ones = new Matrix2d(test);
-        ones.createEmpty(size);
+        //ones.createEmpty(size);
         float one = 1;
         ones.fillWithItem(one);
         float[][] result = ones.vals.clone();

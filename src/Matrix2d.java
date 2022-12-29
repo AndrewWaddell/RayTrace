@@ -122,28 +122,31 @@ public class Matrix2d {
 
     public Matrix2d rotate3dVector90Deg(){
         // this matrix is a series of column vectors V, each 3 dimensions (rows)
+        // rotate all vectors by 90deg in unimportant direction
+        // I rotate all vectors about the x-axis
+        // however if a vector is the x-axis, then I rotate it about the y-axis
 
         Matrix2d Rx = new Matrix2d(new float[][]{{1,0,0},{0,0,-1},{0,1,0}}); // rotation matrix 90deg about x-axis
         Matrix2d Ry = new Matrix2d(new float[][]{{0,0,1},{0,1,0},{-1,0,0}}); // rotation matrix 90deg about y-axis
 
-        float[] xAxis = {1,0,0};
-        boolean[] whereX = findCol(xAxis);
-        boolean[] whereNotX = new boolean[whereX.length];
+        boolean[] whereX = findCol(new float[]{1,0,0}); // find the index of all instances of x-axis in V
+        boolean[] whereNotX = new boolean[whereX.length]; // find index of all other vectors
         for (int i=0;i<whereX.length;i++){
             whereNotX[i] = !whereX[i];
         }
 
-        Matrix2d withX = new Matrix2d(indexCol(whereX));
-        Matrix2d withoutX = new Matrix2d(indexCol(whereNotX));
+        Matrix2d X = new Matrix2d(indexCol(whereX)); // the collection of x-axis vectors 1,0,0
+        Matrix2d others = new Matrix2d(indexCol(whereNotX)); // all other vectors
 
 
-        float[][] rotatedX = Ry.multiply(withX); // rotate x-axis vectors about y-axis
-        float[][] rotatedNotX = Rx.multiply(withoutX); // rotate all other vectors about x-axis
+        Matrix2d rotatedX = Ry.multiply(X); // rotate x-axis vectors about y-axis
+        Matrix2d rotatedNotX = Rx.multiply(others); // rotate all other vectors about x-axis
 
-        float[][] rotated = new float[numRows][numCols];
+        Matrix2d rotated = new Matrix2d("emtpy",size); // fill in each chunk into 1 matrix
+        rotated.insertCol(rotatedX,whereX);
+        rotated.insertCol(rotatedNotX,whereNotX);
 
-
-        return rotatedX;
+        return rotated;
     }
     public boolean[] findCol(float[] col){
         // for a series of column vectors, find those that equal col

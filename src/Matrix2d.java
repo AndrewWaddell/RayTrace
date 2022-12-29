@@ -144,20 +144,27 @@ public class Matrix2d {
 
     public float[][] rotate3dVector90Deg(){
         // this matrix is a series of column vectors V, each 3 dimensions (rows)
-        float[][] Rxvals = {{1,0,0},{0,0,-1},{0,1,0}};
-        Matrix2d Rx = new Matrix2d(Rxvals); // rotation matrix 90deg about x-axis
-        float[][] Ryvals = {{0,0,1},{0,1,0},{-1,0,0}};
-        Matrix2d Ry = new Matrix2d(Ryvals); // rotation matrix 90deg about y-axis
+
+        Matrix2d Rx = new Matrix2d(new float[][]{{1,0,0},{0,0,-1},{0,1,0}}); // rotation matrix 90deg about x-axis
+        Matrix2d Ry = new Matrix2d(new float[][]{{0,0,1},{0,1,0},{-1,0,0}}); // rotation matrix 90deg about y-axis
 
         float[] xAxis = {1,0,0};
         boolean[] whereX = findCol(xAxis);
+        boolean[] whereNotX = new boolean[whereX.length];
+        for (int i=0;i<whereX.length;i++){
+            whereNotX[i] = !whereX[i];
+        }
 
-        float[][] withX = indexCol(whereX); // do i need to create a matrix?
-        //float[][] withoutX = indexCol(!whereX);
+        Matrix2d withX = new Matrix2d(indexCol(whereX));
+        Matrix2d withoutX = new Matrix2d(indexCol(whereNotX));
 
-        //withX
-        float[][] rotatedX = Ry.multiply(this); // rotate x-axis vectors about y axis
-        float[][] rotatednotX = Rx.multiply(this);
+
+        float[][] rotatedX = Ry.multiply(withX); // rotate x-axis vectors about y-axis
+        float[][] rotatedNotX = Rx.multiply(withoutX); // rotate all other vectors about x-axis
+
+        float[][] rotated = new float[numRows][numCols];
+
+
         return rotatedX;
     }
     public boolean[] findCol(float[] col){
@@ -190,5 +197,15 @@ public class Matrix2d {
             }
         }
         return output;
+    }
+    public void insertCol(Matrix2d inMat,boolean[] index){
+        // insert inMat columns into this matrix where index is true
+        for (int i=0;i<numRows;i++){
+            for (int j=0;j<numCols;j++){
+                if (index[j]){
+                    vals[i][j] = inMat.vals[i][j];
+                }
+            }
+        }
     }
 }

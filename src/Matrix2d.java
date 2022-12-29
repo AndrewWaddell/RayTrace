@@ -46,12 +46,12 @@ public class Matrix2d {
         }
         return result;
     }
-    public float[][] subtract(Matrix2d mat2){
+    public Matrix2d subtract(Matrix2d mat2){
         // result = this - mat2
-        float[][] result = new float[numRows][numCols];
+        Matrix2d result = new Matrix2d("empty",size);
         for (int i=0;i<numRows;i++){
             for (int j=0;j<numCols;j++){
-                result[i][j] = vals[i][j] - mat2.vals[i][j];
+                result.vals[i][j] = vals[i][j] - mat2.vals[i][j];
             }
         }
         return result;
@@ -64,26 +64,25 @@ public class Matrix2d {
             }
         }
     }
-    public float[][] multiplyPiecewise(Matrix2d mat2){
+    public Matrix2d multiplyPiecewise(Matrix2d mat2){
         // multiply each element in matrix with each in mat2
         // both matrices must be the same dimensions
-        float[][] result = new float[numRows][numCols];
+        Matrix2d result = new Matrix2d("empty",size);
         for (int i=0;i<numRows;i++){
             for (int j=0;j<numCols;j++){
-                result[i][j] = vals[i][j] * mat2.vals[i][j];
+                result.vals[i][j] = vals[i][j] * mat2.vals[i][j];
             }
         }
         return result;
     }
-    public float[][] raisePower(int POWER){
-        Matrix2d ones = new Matrix2d("empty",size);
-        ones.fillWithItem(1F);
-        float[][] result = ones.vals.clone();
+    public Matrix2d raisePower(int POWER){
+        Matrix2d result = new Matrix2d("empty",size);
+        result.fillWithItem(1F);
         if (POWER<0){
             for (int power=0;power>POWER;power--) {
                 for (int i = 0; i < numRows; i++) {
                     for (int j = 0; j < numCols; j++) {
-                        result[i][j] = result[i][j] / vals[i][j];
+                        result.vals[i][j] = result.vals[i][j] / vals[i][j];
                     }
                 }
             }
@@ -91,41 +90,37 @@ public class Matrix2d {
             for (int power=0;power<POWER;power++) {
                 for (int i = 0; i < numRows; i++) {
                     for (int j = 0; j < numCols; j++) {
-                        result[i][j] = result[i][j] * vals[i][j];
+                        result.vals[i][j] = result.vals[i][j] * vals[i][j];
                     }
                 }
             }
         }
         return result;
     }
-    public float[][] multiply(Matrix2d inMat){
-        // multiply this matrix A by input matrix B: result = A * B
-        if (numCols != inMat.numRows){
-            System.out.println("Matrix dimensions not compatible for multiplication");
-            float[][] zero = new float[1][1];
-            return zero;
-        }
-        float[][] product = new float[numRows][inMat.numCols];
+    public Matrix2d multiply(Matrix2d B){
+        // multiply matrix A (this) by matrix B: result = A * B
+        // number of columns in A must equal number of rows in B
+        Matrix2d product = new Matrix2d("empty",new int[]{numRows,B.numCols});
         for (int i=0;i<numRows;i++){
-            for (int j=0;j<inMat.numCols;j++){
+            for (int j=0;j<B.numCols;j++){
                 for (int k=0;k<numCols;k++){
-                    product[i][j] += vals[i][k] * inMat.vals[k][j];
+                    product.vals[i][j] += vals[i][k] * B.vals[k][j];
                 }
             }
         }
         return product;
     }
-    public float[][] transpose(){
-        float[][] result = new float[numCols][numRows];
+    public Matrix2d transpose(){
+        Matrix2d result = new Matrix2d("empty",size);
         for (int i=0;i<numRows;i++){
             for (int j=0;j<numCols;j++){
-                result[j][i] = vals[i][j];
+                result.vals[j][i] = vals[i][j];
             }
         }
         return result;
     }
 
-    public float[][] rotate3dVector90Deg(){
+    public Matrix2d rotate3dVector90Deg(){
         // this matrix is a series of column vectors V, each 3 dimensions (rows)
 
         Matrix2d Rx = new Matrix2d(new float[][]{{1,0,0},{0,0,-1},{0,1,0}}); // rotation matrix 90deg about x-axis
@@ -163,19 +158,19 @@ public class Matrix2d {
         }
         return found;
     }
-    public float[][] indexCol(boolean[] index){
+    public Matrix2d indexCol(boolean[] index){
         // output only the columns that are true in index
         int outCols = 0; // number of columns in output
-        for (int i=0;i<index.length;i++){
-            if (index[i]){
+        for (boolean b : index) {
+            if (b) {
                 outCols++;
             }
         }
-        float[][] output = new float[numRows][outCols];
+        Matrix2d output = new Matrix2d("empty",new int[]{numRows,outCols});
         for (int i=0;i<numRows;i++){
             for (int j=0;j<numCols;j++){
                 if (index[j]){
-                    output[i][j] = vals[i][j];
+                    output.vals[i][j] = vals[i][j];
                 }
             }
         }

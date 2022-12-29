@@ -55,8 +55,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/Matrix2d.java</url>
-          <line>203</line>
-          <option name="timeStamp" value="5" />
+          <line>195</line>
+          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

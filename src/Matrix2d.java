@@ -8,7 +8,7 @@ public class Matrix2d {
     public Matrix2d(Object... Varin){
         // Matrix2d(array) creates matrix from an array
         // Matrix2d("empty",size) creates empty matrix of given size
-        if (Varin[0] instanceof float[]) { // matrix is given
+        if (Varin[0] instanceof float[]) { // matrix is given as a 2d array
             vals = (float[][]) Varin;
             numRows = vals.length;
             numCols = vals[0].length;
@@ -18,23 +18,6 @@ public class Matrix2d {
             numRows = size[0];
             numCols = size[1];
             vals = new float[numRows][numCols];
-        }
-    }
-
-    public void populateRow(int i, float[] row){
-        // i is the index of the row that we want to insert into the matrix
-        // row contains all the values in the row
-        vals[i] = row;
-    }
-    public void populateCol(int j, float[] col){
-        // j is the index of the column that we want to insert into the matrix
-        // col contains all the values in the column
-        if (col.length != numRows){
-            System.out.println("Column is incorrect length");
-            return;
-        }
-        for(int i=0;i<numRows;i++){
-            vals[i][j] = col[i];
         }
     }
     public void fillWithItem(float item) {
@@ -53,12 +36,12 @@ public class Matrix2d {
             System.out.println();
         }
     }
-    public float[][] add(Matrix2d mat2){
+    public Matrix2d add(Matrix2d mat2){
         // result = this + mat2
-        float[][] result = new float[numRows][numCols];
+        Matrix2d result = new Matrix2d("empty",size);
         for (int i=0;i<numRows;i++){
             for (int j=0;j<numCols;j++){
-                result[i][j] = vals[i][j] + mat2.vals[i][j];
+                result.vals[i][j] = vals[i][j] + mat2.vals[i][j];
             }
         }
         return result;

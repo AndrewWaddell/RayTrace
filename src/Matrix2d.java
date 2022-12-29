@@ -1,4 +1,5 @@
 import javax.sound.sampled.EnumControl;
+import java.util.Arrays;
 
 public class Matrix2d {
     int[] size;
@@ -187,5 +188,23 @@ public class Matrix2d {
                 }
             }
         }
+    }
+    public void concatenateCol(Matrix2d inMat){
+        // attach input matrix to the end of this matrix
+        // result overwrites this matrix.
+        // this matrix and input matrix have the same number of rows
+        int newCols = numCols + inMat.numCols;
+
+        float[][] largerArray = Arrays.copyOf(vals,newCols);
+        vals = null;
+        vals = largerArray;
+
+        for (int i=0;i<numRows;i++){
+            for (int j=0;j<inMat.numCols;j++){
+                vals[i][numCols+j] = inMat.vals[i][j];
+            }
+        }
+        numCols = newCols;
+        size[1] = numCols;
     }
 }

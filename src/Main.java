@@ -2,9 +2,11 @@ public class Main {
     public static void main(String[] args) {
 
 
-        int[] size = {0,0};
+        int[] size = {2,2};
         float[][] vals1 = {{2,13},{-9,11}};
-        Matrix2d mat1 = new Matrix2d("empty",size);
+        Matrix2d c = new Matrix2d(new float[][]{{3},{4}});
+        Matrix2d mat1 = new Matrix2d(vals1);
+        mat1.concatenateCol(c);
         mat1.print();
 
 

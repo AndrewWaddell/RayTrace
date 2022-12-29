@@ -211,9 +211,15 @@ public class Matrix2d {
         Ry.populateRow(2,row2);
         Ry.populateRow(3,row3);
 
+        float[] xAxis = {1,0,0};
+        boolean[] whereX = findCol(xAxis);
         
+        float[][] withX = indexCol(whereX); // do i need to create a matrix?
+        float[][] withoutX = indexCol(!whereX);
 
-        float[][] rotated = R.multiply(this);
+        withX
+        float[][] rotatedX = Ry.multiply(this); // rotate x-axis vectors about y axis
+        float[][] rotatednotX = Rx.multiply(this)
         return rotated;
     }
     public boolean[] findCol(float[] col){

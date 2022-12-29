@@ -119,7 +119,6 @@ public class Matrix2d {
         }
         return result;
     }
-
     public Matrix2d rotate3dVector90Deg(){
         // this matrix is a series of column vectors V, each 3 dimensions (rows)
         // rotate all vectors by 90deg in unimportant direction

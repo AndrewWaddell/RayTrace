@@ -6,7 +6,7 @@ public class Main {
         float[][] vals1 = {{1,2},{3,4}};
         Matrix2d mat1 = new Matrix2d(vals1);
         Matrix2d mat2 = new Matrix2d(new float[][]{{5,6},{7,8}});
-        Matrix2d matC = new Matrix2d(mat1.concatenateCol(mat2));
+        Matrix2d matC = mat1.concatenateCol(mat2);
         matC.print();
 
 

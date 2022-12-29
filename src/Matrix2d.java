@@ -193,8 +193,12 @@ public class Matrix2d {
         // this matrix and input matrix have the same number of rows
         int newCols = numCols + inMat.numCols;
         float[][] newArray = new float[numRows][newCols];
-        System.arraycopy(vals,0,newArray,0,numCols);
-        System.arraycopy(inMat.vals,0,newArray,numCols,inMat.numCols);
+        for (int i=0;i<numRows;i++){
+            System.arraycopy(vals[i],0,newArray[i],0,numCols);
+        }
+        for (int i=0;i<numRows;i++){
+            System.arraycopy(inMat.vals[i],0,newArray[i],numCols,inMat.numCols);
+        }
         return new Matrix2d(newArray);
     }
 }

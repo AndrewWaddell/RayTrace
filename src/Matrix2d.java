@@ -201,4 +201,17 @@ public class Matrix2d {
         }
         return new Matrix2d(newArray);
     }
+    public Matrix2d cross(Matrix2d b){
+        // cross product of vector a (this) and vector b, result = a cross b
+        // each matrix is a series of column vectors with 3 rows
+        // each matrix has the same number of columns
+        Matrix2d result = new Matrix2d("empty",size);
+        for (int j=0;j<numCols;j++){
+            result.vals[0][j] = vals[1][j]*b.vals[2][j] - vals[2][j]*b.vals[1][j];
+            result.vals[1][j] = vals[2][j]*b.vals[0][j] - vals[0][j]*b.vals[2][j];
+            result.vals[2][j] = vals[0][j]*b.vals[1][j] - vals[1][j]*b.vals[0][j];
+
+        }
+        return result;
+    }
 }

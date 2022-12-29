@@ -5,7 +5,7 @@ public class Matrix2d {
     int numRows;
     int numCols;
     float[][] vals;
-    public void Matrix2d(float[][] inMat){
+    public Matrix2d(float[][] inMat){
         vals = inMat;
         numRows = inMat.length;
         numCols = inMat[0].length;
@@ -92,7 +92,8 @@ public class Matrix2d {
         return result;
     }
     public float[][] raisePower(int POWER){
-        Matrix2d ones = new Matrix2d();
+        float[][] test = {{}};
+        Matrix2d ones = new Matrix2d(test);
         ones.createEmpty(size);
         float one = 1;
         ones.fillWithItem(one);
@@ -145,31 +146,32 @@ public class Matrix2d {
 
     public float[][] rotate3dVector90Deg(){
         // this matrix is a series of column vectors V, each 3 dimensions (rows)
-        Matrix2d Rx = new Matrix2d(); // rotation matrix 90deg about x-axis
+        float[][] test = {{}};
+        Matrix2d Rx = new Matrix2d(test); // rotation matrix 90deg about x-axis
         float[] row1x = {1,0,0};
         float[] row2x = {0,0,-1};
         float[] row3x = {0,1,0};
-        Rx.populateRow(1,row1);
-        Rx.populateRow(2,row2);
-        Rx.populateRow(3,row3);
-        Matrix2d Ry = new Matrix2d(); // rotation matrix 90deg about y-axis
+        Rx.populateRow(1,row1x);
+        Rx.populateRow(2,row2x);
+        Rx.populateRow(3,row3x);
+        Matrix2d Ry = new Matrix2d(test); // rotation matrix 90deg about y-axis
         float[] row1y = {0,0,1};
         float[] row2y = {0,1,0};
         float[] row3y = {-1,0,0};
-        Ry.populateRow(1,row1);
-        Ry.populateRow(2,row2);
-        Ry.populateRow(3,row3);
+        Ry.populateRow(1,row1y);
+        Ry.populateRow(2,row2y);
+        Ry.populateRow(3,row3y);
 
         float[] xAxis = {1,0,0};
         boolean[] whereX = findCol(xAxis);
 
         float[][] withX = indexCol(whereX); // do i need to create a matrix?
-        float[][] withoutX = indexCol(!whereX);
+        //float[][] withoutX = indexCol(!whereX);
 
-        withX
+        //withX
         float[][] rotatedX = Ry.multiply(this); // rotate x-axis vectors about y axis
-        float[][] rotatednotX = Rx.multiply(this)
-        return rotated;
+        float[][] rotatednotX = Rx.multiply(this);
+        return rotatedX;
     }
     public boolean[] findCol(float[] col){
         // for a series of column vectors, find those that equal col

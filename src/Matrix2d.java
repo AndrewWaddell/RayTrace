@@ -6,15 +6,17 @@ public class Matrix2d {
     int numCols;
     float[][] vals;
     public Matrix2d(Object... Varin){
-        // if size is given, then create an empty matrix
-        if (Varin[0] instanceof float[][]) { // matrix is given
+        // construct normally as
+        // Matrix2d(array)
+        // to create an empty matrix:
+        // Matrix2d("empty",size)
+        if (Varin.length==1) { // matrix is given
             vals = (float[][]) Varin[0];
             numRows = vals.length;
             numCols = vals[0].length;
             size = new int[]{numRows, numCols};
-        } else if (Varin[0] instanceof float[]) { // size is given
-            // creates empty matrix
-            size = (int[]) Varin[0];
+        } else if (Varin.length==2) { // create empty matrix
+            size = (int[]) Varin[1];
             numRows = size[0];
             numCols = size[1];
             vals = new float[numRows][numCols];

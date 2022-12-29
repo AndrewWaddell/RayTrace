@@ -183,7 +183,17 @@ public class Matrix2d {
         }
         return product;
     }
-    public float[][] rotate3dVector90Deg(){
+    public float[][] transpose(){
+        float[][] result = new float[numCols][numRows];
+        for (int i=0;i<numRows;i++){
+            for (int j=0;j<numCols;j++){
+                result[j][i] = vals[i][j];
+            }
+        }
+        return result;
+    }
+
+    public float[][] rotate3dVector90Deg(Matrix2d v){
         // 2 rotation matrices evaluated at theta=90deg about x and y axis
         Matrix2d Rx = new Matrix2d();
         Matrix2d Ry = new Matrix2d();
@@ -199,6 +209,8 @@ public class Matrix2d {
         Ry.populateRow(1,row1y);
         Ry.populateRow(2,row2y);
         Ry.populateRow(3,row3y);
-        
+        float[][] result = {{}};
+        return result;
     }
+
 }

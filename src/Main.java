@@ -5,11 +5,13 @@ public class Main {
         Matrix2d mat3 = new Matrix2d();
 
         int[] size = {2,2};
-        float[][] vals1 = {{3,7},{4,9}};
+        float[][] vals1 = {{2,13},{-9,11},{3,17}};
         float[][] vals2 = {{6,2},{5,8}};
         mat1.create(vals1);
         mat2.create(vals2);
-        mat3.create(mat1.multiply(mat2));
+        mat1.print();
+        System.out.println("-");
+        mat3.create(mat1.transpose());
         mat3.print();
 
     }

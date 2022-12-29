@@ -54,6 +54,7 @@ public class Matrix2d {
         }
     }
     public float[][] add(Matrix2d mat2){
+        // result = this + mat2
         float[][] result = new float[numRows][numCols];
         for (int i=0;i<numRows;i++){
             for (int j=0;j<numCols;j++){
@@ -63,6 +64,7 @@ public class Matrix2d {
         return result;
     }
     public float[][] subtract(Matrix2d mat2){
+        // result = this - mat2
         float[][] result = new float[numRows][numCols];
         for (int i=0;i<numRows;i++){
             for (int j=0;j<numCols;j++){
@@ -71,14 +73,8 @@ public class Matrix2d {
         }
         return result;
     }
-    public void addValue(float value){
-        for (int i=0;i<numRows;i++){
-            for (int j=0;j<numCols;j++){
-                vals[i][j] = value;
-            }
-        }
-    }
     public void multiplyBy(float value){
+        // multiply each element in array by value
         for (int i=0;i<numRows;i++){
             for (int j=0;j<numCols;j++){
                 vals[i][j] = vals[i][j]*value;
@@ -86,6 +82,8 @@ public class Matrix2d {
         }
     }
     public float[][] multiplyPiecewise(Matrix2d mat2){
+        // multiply each element in matrix with each in mat2
+        // both matrices must be the same dimensions
         float[][] result = new float[numRows][numCols];
         for (int i=0;i<numRows;i++){
             for (int j=0;j<numCols;j++){
@@ -95,11 +93,8 @@ public class Matrix2d {
         return result;
     }
     public float[][] raisePower(int POWER){
-        float[][] test = {{}};
-        Matrix2d ones = new Matrix2d(test);
-        //ones.createEmpty(size);
-        float one = 1;
-        ones.fillWithItem(one);
+        Matrix2d ones = new Matrix2d("empty",size);
+        ones.fillWithItem(1F);
         float[][] result = ones.vals.clone();
         if (POWER<0){
             for (int power=0;power>POWER;power--) {
@@ -149,21 +144,10 @@ public class Matrix2d {
 
     public float[][] rotate3dVector90Deg(){
         // this matrix is a series of column vectors V, each 3 dimensions (rows)
-        float[][] test = {{}};
-        Matrix2d Rx = new Matrix2d(test); // rotation matrix 90deg about x-axis
-        float[] row1x = {1,0,0};
-        float[] row2x = {0,0,-1};
-        float[] row3x = {0,1,0};
-        Rx.populateRow(1,row1x);
-        Rx.populateRow(2,row2x);
-        Rx.populateRow(3,row3x);
-        Matrix2d Ry = new Matrix2d(test); // rotation matrix 90deg about y-axis
-        float[] row1y = {0,0,1};
-        float[] row2y = {0,1,0};
-        float[] row3y = {-1,0,0};
-        Ry.populateRow(1,row1y);
-        Ry.populateRow(2,row2y);
-        Ry.populateRow(3,row3y);
+        float[][] Rxvals = {{1,0,0},{0,0,-1},{0,1,0}};
+        Matrix2d Rx = new Matrix2d(Rxvals); // rotation matrix 90deg about x-axis
+        float[][] Ryvals = {{0,0,1},{0,1,0},{-1,0,0}};
+        Matrix2d Ry = new Matrix2d(Ryvals); // rotation matrix 90deg about y-axis
 
         float[] xAxis = {1,0,0};
         boolean[] whereX = findCol(xAxis);

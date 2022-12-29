@@ -163,6 +163,7 @@ public class Matrix2d {
         return result;
     }
     public float[][] multiply(Matrix2d inMat){
+        // multiply this matrix A by input matrix B: result = A * B
         if (!created){
             System.out.println("Matrix not created");
             float[][] zero = new float[1][1];
@@ -193,24 +194,57 @@ public class Matrix2d {
         return result;
     }
 
-    public float[][] rotate3dVector90Deg(Matrix2d v){
-        // 2 rotation matrices evaluated at theta=90deg about x and y axis
-        Matrix2d Rx = new Matrix2d();
-        Matrix2d Ry = new Matrix2d();
+    public float[][] rotate3dVector90Deg(){
+        // this matrix is a series of column vectors V, each 3 dimensions (rows)
+        Matrix2d Rx = new Matrix2d(); // rotation matrix 90deg about x-axis
         float[] row1x = {1,0,0};
         float[] row2x = {0,0,-1};
         float[] row3x = {0,1,0};
-        Rx.populateRow(1,row1x);
-        Rx.populateRow(2,row2x);
-        Rx.populateRow(3,row3x);
+        Rx.populateRow(1,row1);
+        Rx.populateRow(2,row2);
+        Rx.populateRow(3,row3);
+        Matrix2d Ry = new Matrix2d(); // rotation matrix 90deg about y-axis
         float[] row1y = {0,0,1};
         float[] row2y = {0,1,0};
         float[] row3y = {-1,0,0};
-        Ry.populateRow(1,row1y);
-        Ry.populateRow(2,row2y);
-        Ry.populateRow(3,row3y);
-        float[][] result = {{}};
-        return result;
-    }
+        Ry.populateRow(1,row1);
+        Ry.populateRow(2,row2);
+        Ry.populateRow(3,row3);
 
+        
+
+        float[][] rotated = R.multiply(this);
+        return rotated;
+    }
+    public boolean[] findCol(float[] col){
+        // for a series of column vectors, find those that equal col
+        boolean[] found = new boolean[numCols];
+        for (int j=0;j<numCols;j++){ // each vector
+            found[j] = true; // assume vector is equal
+            for (int i=0;i<numRows;i++){ // each vector element
+                if (vals[i][j] != col[i]){ // if any element is not equal
+                    found[j] = false; // then vector is not equal
+                }
+            }
+        }
+        return found;
+    }
+    public float[][] indexCol(boolean[] index){
+        // output only the columns that are true in index
+        int outCols = 0; // number of columns in output
+        for (int i=0;i<index.length;i++){
+            if (index[i]){
+                outCols++;
+            }
+        }
+        float[][] output = new float[numRows][outCols];
+        for (int i=0;i<numRows;i++){
+            for (int j=0;j<numCols;j++){
+                if (index[j]){
+                    output[i][j] = vals[i][j];
+                }
+            }
+        }
+        return output;
+    }
 }

@@ -10,6 +10,9 @@ public class Rays {
     ArrayList<float[][]> origins; // index of ray in lengthsAcc
     boolean[] inside; // whether an array is inside a shape
 
+    public void addSources(){
+        // builds rays based on all sources in the scene
+    }
     public Matrix2d[] createNewBasis(){
         // creates non-unique basis for each ray where the third dimension
         // is in the direction of the ray.

@@ -178,6 +178,14 @@ public class Matrix2d {
         }
         return output;
     }
+    public Matrix2d indexCol(int j){
+        // output column specified in index j as a new matrix
+        float[] column = new float[numRows];
+        for (int i=0;i<numRows;i++){
+            column[i] = vals[i][j];
+        }
+        return new Matrix2d(column);
+    }
     public void insertCol(Matrix2d inMat,boolean[] index){
         // insert inMat columns into this matrix where index is true
         for (int i=0;i<numRows;i++){
@@ -213,5 +221,95 @@ public class Matrix2d {
 
         }
         return result;
+    }
+    public boolean isMaxCol(int i,int query){
+        // is the value at the given index (i,query) the maximum along its row?
+        for (int j=0;j<numCols;j++){
+            if (vals[i][j] > vals[i][query]){ // if any value I choose is larger than query
+                return false; // then the query is not the largest
+            }
+        }
+        return true; // we couldn't find a value larger than query
+    }
+    public boolean isMinCol(int i,int query){
+        // is the value at the given index (i,query) the minimum along its row?
+        for (int j=0;j<numCols;j++){
+            if (vals[i][j] < vals[i][query]){ // if any value I choose is smaller than query
+                return false; // then the query is not the smallest
+            }
+        }
+        return true; // we couldn't find a value smaller than query
+    }
+
+    public int minColIndex(int i){
+        // what is the index of the minimum value along row i
+        int minIndex = 0;
+        for (int j=0;j<numCols;j++){
+            if (vals[i][j] < vals[i][minIndex]){
+                minIndex = j;
+            }
+        }
+        return minIndex;
+    }
+    public int maxColIndex(int i){
+        // what is the index of the maximum value along row i
+        int maxIndex = 0;
+        for (int j=0;j<numCols;j++){
+            if (vals[i][j] > vals[i][maxIndex]){
+                maxIndex = j;
+            }
+        }
+        return maxIndex;
+    }
+    public float signedArea(){
+        // signed area of 2D triangle A->B->C
+        // this matrix contains each point in each column
+        // calculated using determinant formula
+        // also known as a ccw formula
+
+        // return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
+        float term1 = (vals[0][1]-vals[0][0])*(vals[1][2]-vals[1][0]);
+        float term2 = (vals[0][2]-vals[0][0])*(vals[1][1]-vals[1][0]);
+        return term1-term2;
+    }
+    public float cosTheta(){
+        // imagine triangle DEF
+        // Angle DEF is theta, (about E)
+        // each point D,E,F is a column in this matrix in order
+        // first row is x, second is y
+
+        // uses formula for two vectors A,B
+        // dot(A,B) = |A|*|B|*cos(theta)
+        // A is from E to D
+        // B is from E to F
+        Matrix2d D = this.indexCol(0);
+        Matrix2d E = this.indexCol(1);
+        Matrix2d F = this.indexCol(2);
+
+        Matrix2d A = D.subtract(E);
+        Matrix2d B = F.subtract(E);
+
+        return (A.dot(B)/(A.magnitude()*B.magnitude()));
+
+    }
+    public float dot(Matrix2d B){
+        // dot product column vectors A,B
+        // product = A dot B
+        // this matrix is A
+        float product = 0;
+        for (int i=0;i<numRows;i++){
+            product += vals[i][0] * B.vals[i][0];
+        }
+        return product;
+    }
+    public float magnitude(){
+        // length of column vector
+        double radicand = 0;
+        for (int i=0;i<numRows;i++){
+            radicand += vals[i][0] * vals[i][0];
+        }
+        double answerD = java.lang.Math.sqrt(radicand);
+        float answerF = (float)answerD;
+        return answerF;
     }
 }

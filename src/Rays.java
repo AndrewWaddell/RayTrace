@@ -4,6 +4,7 @@ public class Rays {
     int numRays; // number of rays
     Matrix2d points; // coordinates of rays
     Matrix2d unit; // unit vectors of rays
+    Matrix2d COB[]; // change of basis matrix
     ArrayList<float[][]> pointsAcc; // accumulated points
     ArrayList<float[][]> unitAcc; // accumulated unit vectors
     ArrayList<float[][]> lengthsAcc; // accumulated lengths of each ray
@@ -12,19 +13,28 @@ public class Rays {
 
     public void addSources(){
         // builds rays based on all sources in the scene
+
+        // for now, create dummy rays for testing
+        numRays = 3;
+        points = new Matrix2d(new float[][]{{0,1,2},{0,0,0},{0,0,0}});
+        unit = new Matrix2d(new float[][]{{0,0,0},{0,0,0},{1,1,1}});
     }
-    public Matrix2d[] createNewBasis(){
+    public void createNewBasis(){
         // creates non-unique basis for each ray where the third dimension
         // is in the direction of the ray.
         Matrix2d orth1 = unit.rotate3dVector90Deg(); // first orthogonal vector
         Matrix2d orth2 = orth1.cross(unit); // second orthogonal vector
 
-        Matrix2d[] COB = new Matrix2d[numRays]; // array of change of basis matrices, each matrix for each ray
+        Matrix2d[] P = new Matrix2d[numRays]; // refer to create_cob.png
+        COB = new Matrix2d[numRays]; // from new basis to old basis
         for (int i=0;i<numRays;i++){
-            // construct each matrix using orth1 orth2 and unit
+            Matrix2d orth1i = orth1.indexCol(i);
+            Matrix2d orth2i = orth2.indexCol(i);
+            Matrix2d uniti = unit.indexCol(i);
+            P[i] = orth1i.concatenateCol(orth2i.concatenateCol(uniti));
+            Matrix2d INV = P[i].inverse3by3();
+            COB[i] = INV.normCol();
         }
-
-        return COB;
     }
 
 }

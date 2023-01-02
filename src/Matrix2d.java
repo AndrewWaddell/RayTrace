@@ -5,20 +5,17 @@ public class Matrix2d {
     int numRows;
     int numCols;
     float[][] vals;
-    public Matrix2d(Object... Varin){
-        // Matrix2d(array) creates matrix from an array
-        // Matrix2d("empty",size) creates empty matrix of given size
-        if (Varin[0] instanceof float[]) { // matrix is given as a 2d array
-            vals = (float[][]) Varin;
-            numRows = vals.length;
-            numCols = vals[0].length;
-            size = new int[]{numRows, numCols};
-        } else if (Varin[0] instanceof String) { // create empty matrix
-            size = (int[]) Varin[1];
-            numRows = size[0];
-            numCols = size[1];
-            vals = new float[numRows][numCols];
-        }
+    public Matrix2d(float[][] inputValues){
+        vals = inputValues;
+        numRows = vals.length;
+        numCols = vals[0].length;
+        size = new int[]{numRows, numCols};
+    }
+    public Matrix2d(int[] emptySize){
+        size = emptySize;
+        numRows = size[0];
+        numCols = size[1];
+        vals = new float[numRows][numCols];
     }
     public void fillWithItem(float item) {
         for (int i = 0; i < numRows; i++) {
@@ -38,7 +35,7 @@ public class Matrix2d {
     }
     public Matrix2d add(Matrix2d mat2){
         // result = this + mat2
-        Matrix2d result = new Matrix2d("empty",size);
+        Matrix2d result = new Matrix2d(size);
         for (int i=0;i<numRows;i++){
             for (int j=0;j<numCols;j++){
                 result.vals[i][j] = vals[i][j] + mat2.vals[i][j];
@@ -48,7 +45,7 @@ public class Matrix2d {
     }
     public Matrix2d subtract(Matrix2d mat2){
         // result = this - mat2
-        Matrix2d result = new Matrix2d("empty",size);
+        Matrix2d result = new Matrix2d(size);
         for (int i=0;i<numRows;i++){
             for (int j=0;j<numCols;j++){
                 result.vals[i][j] = vals[i][j] - mat2.vals[i][j];
@@ -56,18 +53,20 @@ public class Matrix2d {
         }
         return result;
     }
-    public void multiplyBy(float value){
-        // multiply each element in array by value
+    public Matrix2d multiplyBy(float value){
+        // multiply each element in array by value, return output
+        Matrix2d output = new Matrix2d(size);
         for (int i=0;i<numRows;i++){
             for (int j=0;j<numCols;j++){
-                vals[i][j] = vals[i][j]*value;
+                output.vals[i][j] = vals[i][j]*value;
             }
         }
+        return output;
     }
     public Matrix2d multiplyPiecewise(Matrix2d mat2){
         // multiply each element in matrix with each in mat2
         // both matrices must be the same dimensions
-        Matrix2d result = new Matrix2d("empty",size);
+        Matrix2d result = new Matrix2d(size);
         for (int i=0;i<numRows;i++){
             for (int j=0;j<numCols;j++){
                 result.vals[i][j] = vals[i][j] * mat2.vals[i][j];
@@ -76,7 +75,7 @@ public class Matrix2d {
         return result;
     }
     public Matrix2d raisePower(int POWER){
-        Matrix2d result = new Matrix2d("empty",size);
+        Matrix2d result = new Matrix2d(size);
         result.fillWithItem(1F);
         if (POWER<0){
             for (int power=0;power>POWER;power--) {
@@ -100,7 +99,7 @@ public class Matrix2d {
     public Matrix2d multiply(Matrix2d B){
         // multiply matrix A (this) by matrix B: result = A * B
         // number of columns in A must equal number of rows in B
-        Matrix2d product = new Matrix2d("empty",new int[]{numRows,B.numCols});
+        Matrix2d product = new Matrix2d(new int[]{numRows,B.numCols});
         for (int i=0;i<numRows;i++){
             for (int j=0;j<B.numCols;j++){
                 for (int k=0;k<numCols;k++){
@@ -111,7 +110,10 @@ public class Matrix2d {
         return product;
     }
     public Matrix2d transpose(){
-        Matrix2d result = new Matrix2d("empty",size);
+        int[] newSize = new int[2];
+        newSize[0] = size[1];
+        newSize[1] = size[0];
+        Matrix2d result = new Matrix2d(newSize);
         for (int i=0;i<numRows;i++){
             for (int j=0;j<numCols;j++){
                 result.vals[j][i] = vals[i][j];
@@ -134,14 +136,14 @@ public class Matrix2d {
             whereNotX[i] = !whereX[i];
         }
 
-        Matrix2d X = new Matrix2d(indexCol(whereX)); // the collection of x-axis vectors 1,0,0
-        Matrix2d others = new Matrix2d(indexCol(whereNotX)); // all other vectors
+        Matrix2d X = indexCol(whereX); // the collection of x-axis vectors 1,0,0
+        Matrix2d others = indexCol(whereNotX); // all other vectors
 
 
         Matrix2d rotatedX = Ry.multiply(X); // rotate x-axis vectors about y-axis
         Matrix2d rotatedNotX = Rx.multiply(others); // rotate all other vectors about x-axis
 
-        Matrix2d rotated = new Matrix2d("emtpy",size); // fill in each chunk into 1 matrix
+        Matrix2d rotated = new Matrix2d(size); // fill in each chunk into 1 matrix
         rotated.insertCol(rotatedX,whereX);
         rotated.insertCol(rotatedNotX,whereNotX);
 
@@ -168,11 +170,14 @@ public class Matrix2d {
                 outCols++;
             }
         }
-        Matrix2d output = new Matrix2d("empty",new int[]{numRows,outCols});
+        Matrix2d output = new Matrix2d(new int[]{numRows,outCols});
+        int jOut = 0;
         for (int i=0;i<numRows;i++){
+            jOut = 0;
             for (int j=0;j<numCols;j++){
                 if (index[j]){
-                    output.vals[i][j] = vals[i][j];
+                    output.vals[i][jOut] = vals[i][j];
+                    jOut++;
                 }
             }
         }
@@ -180,11 +185,37 @@ public class Matrix2d {
     }
     public Matrix2d indexCol(int j){
         // output column specified in index j as a new matrix
-        float[] column = new float[numRows];
+        Matrix2d column = new Matrix2d(new int[]{numRows,1});
         for (int i=0;i<numRows;i++){
-            column[i] = vals[i][j];
+            column.vals[i][0] = vals[i][j];
         }
-        return new Matrix2d(column);
+        return column;
+    }
+    public Matrix2d indexRow(boolean[] index){
+        // return only rows specified true in index
+        int outRows = 0; // number of rows in output
+        for (boolean b : index) {
+            if (b) {
+                outRows++;
+            }
+        }
+        Matrix2d output = new Matrix2d(new int[]{outRows,numCols});
+        int iOut = 0;
+        for (int i=0;i<numRows;i++){
+            if (index[i]) {
+                for (int j = 0; j < numCols; j++) {
+                    output.vals[iOut][j] = vals[i][j];
+                }
+                iOut++;
+            }
+        }
+        return output;
+    }
+    public Matrix2d indexRow(int i){
+        // return only row specified in i as a new matrix
+        Matrix2d output = new Matrix2d(new int[]{1,numCols});
+        output.vals[0] = vals[i];
+        return output;
     }
     public void insertCol(Matrix2d inMat,boolean[] index){
         // insert inMat columns into this matrix where index is true
@@ -213,7 +244,7 @@ public class Matrix2d {
         // cross product of vector a (this) and vector b, result = a cross b
         // each matrix is a series of column vectors with 3 rows
         // each matrix has the same number of columns
-        Matrix2d result = new Matrix2d("empty",size);
+        Matrix2d result = new Matrix2d(size);
         for (int j=0;j<numCols;j++){
             result.vals[0][j] = vals[1][j]*b.vals[2][j] - vals[2][j]*b.vals[1][j];
             result.vals[1][j] = vals[2][j]*b.vals[0][j] - vals[0][j]*b.vals[2][j];
@@ -297,8 +328,27 @@ public class Matrix2d {
         // product = A dot B
         // this matrix is A
         float product = 0;
-        for (int i=0;i<numRows;i++){
-            product += vals[i][0] * B.vals[i][0];
+
+        if (numRows==1){
+            if (B.numRows==1){
+                for (int i=0;i<numCols;i++){
+                    product += vals[0][i] * B.vals[0][i];
+                }
+            } else {
+                for (int i=0;i<numCols;i++){
+                    product += vals[0][i] * B.vals[i][0];
+                }
+            }
+        } else {
+            if (B.numRows==1){
+                for (int i=0;i<numCols;i++){
+                    product += vals[1][0] * B.vals[0][i];
+                }
+            } else {
+                for (int i=0;i<numCols;i++){
+                    product += vals[i][0] * B.vals[i][0];
+                }
+            }
         }
         return product;
     }
@@ -311,5 +361,51 @@ public class Matrix2d {
         double answerD = java.lang.Math.sqrt(radicand);
         float answerF = (float)answerD;
         return answerF;
+    }
+    public Matrix2d inverse3by3(){
+        // this matrix is of size 3x3
+        // calculate the inverse
+
+        // cofactor matrix uses the determinant of each minor, the values in the rows
+        // and columns other than each element. So first I remove rows,columns
+        Matrix2d cofactors = new Matrix2d(new int[]{3,3});
+        for (int i=0;i<3;i++){
+            boolean[] rowIndex = new boolean[3];
+            for (int k=0;k<3;k++){
+                rowIndex[k] = k!=i; // remove only this row
+            }
+            Matrix2d rowRemoved = this.indexRow(rowIndex);
+            for (int j=0;j<3;j++){
+                boolean[] colIndex = new boolean[3];
+                for (int k=0;k<3;k++){
+                    colIndex[k] = k!=j; // remove only this column
+                }
+                Matrix2d minorMatrix = rowRemoved.indexCol(colIndex);
+                cofactors.vals[i][j] = minorMatrix.det2by2() * (float)java.lang.Math.pow(-1,i+j);
+            }
+        }
+        Matrix2d adjoint = cofactors.transpose();
+        Matrix2d firstRow = this.indexRow(0);
+        float determinant = firstRow.dot(cofactors.indexRow(0));
+        return adjoint.multiplyBy(1/determinant);
+    }
+    public float det2by2(){
+        // find the determinant of a 2 x 2 matrix
+        return ((vals[0][0]*vals[1][1]) - (vals[0][1]*vals[1][0]));
+    }
+
+    public Matrix2d normCol(){
+        // normalise columns of matrix
+        Matrix2d normalised = new Matrix2d(size);
+        for (int j=0;j<numCols;j++){
+            float sum = 0;
+            for (int i=0;i<numRows;i++){
+                sum += vals[i][j];
+            }
+            for (int i=0;i<numRows;i++){
+                normalised.vals[i][j] = vals[i][j]/sum;
+            }
+        }
+        return normalised;
     }
 }

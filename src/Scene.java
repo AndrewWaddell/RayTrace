@@ -3,6 +3,18 @@ public class Scene {
     Rays rays;
     Shape[] shapes;
     float refractiveIndex = 1;
+    public void trace(){
+        // Traces rays from sources to sensors until no rays are left
+
+        Rays rays = new Rays();
+        rays.addSources();
+        rays.createNewBasis();
+        for (int i=0;i<rays.numRays;i++){
+            rays.COB[i].print();
+            System.out.println();
+        }
+
+    }
     public void traceStep(){
         // executes a single step within the trace. All rays bounce to the next shape.
     }

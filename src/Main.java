@@ -3,7 +3,9 @@ public class Main {
 
 
         Scene opticalBench = new Scene();
+        opticalBench.trace();
         opticalBench.plot();
+
 
 
     }

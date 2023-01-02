@@ -11,10 +11,14 @@ public class Shape {
     public Shape(String filename){
         // import shape from mesh file
     }
-    public void traceLowRes(){
+    public boolean traceLowRes(){
         // Does any ray intersect with this shape?
         // Don't waste time tracing if no rays intersect
-
+        return true; //placeholder
+    }
+    public double[] traceDistance(Rays rays){
+        // find the distance to each shape, for each ray
+        return new double[]{0};
     }
     public boolean triangleInterior(Matrix2d points,Matrix2d Q){
         // determines whether query point Q is within the triangle

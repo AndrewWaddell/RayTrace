@@ -5,6 +5,7 @@ public class Rays {
     Matrix2d points; // coordinates of rays
     Matrix2d unit; // unit vectors of rays
     Matrix2d COB[]; // change of basis matrix
+    boolean[] blocked; // has each ray hit a blocker?
     ArrayList<double[][]> pointsAcc; // accumulated points
     ArrayList<double[][]> unitAcc; // accumulated unit vectors
     ArrayList<double[][]> lengthsAcc; // accumulated lengths of each ray
@@ -36,5 +37,11 @@ public class Rays {
             COB[i] = INV.normCol();
         }
     }
+    public void update(boolean[] index, Shape shape){
+        // update location and direction of rays at given index to intersecting given shape
+        // saves existing values into accumulated list arrays before overwriting values
+        // checks if rays have hit a blocker
+        
 
+    }
 }

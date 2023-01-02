@@ -406,4 +406,10 @@ public class Matrix2d {
         }
         return normalised;
     }
+    public BooleanArray minCol(){
+        // finds the minimum value along each column
+        // sets these to true, the rest to false in
+        // output array, which is same shape as input matrix
+        return new BooleanArray(new boolean[][]{});
+    }
 }

@@ -8,15 +8,35 @@ public class Scene {
 
         Rays rays = new Rays();
         rays.addSources();
-        rays.createNewBasis();
-        for (int i=0;i<rays.numRays;i++){
-            rays.COB[i].print();
-            System.out.println();
+        int looplimit = 1; // prevents closed loop mirror bouncing
+        for (int i=0;i<looplimit;i++){
+            if (raysAreActive()){
+                traceStep();
+            }
         }
 
     }
     public void traceStep(){
         // executes a single step within the trace. All rays bounce to the next shape.
+        rays.createNewBasis();
+        Matrix2d distance = new Matrix2d(new int[]{shapes.length, rays.numRays}); // each ray,shape, distance
+        distance.fillWithItem(Double.POSITIVE_INFINITY); // assume ray doesn't intersect with shape
+        for (int i=0;i<shapes.length;i++){
+            if (shapes[i].traceLowRes()){
+                distance.vals[i] = shapes[i].traceDistance(rays);
+            }
+        }
+        BooleanArray closestShapes = distance.minCol(); // for each ray, which shape intersection is the closest?
+        for (int i=0;i<shapes.length;i++){
+            if (!closestShapes.allFalseRow(i)){ // skip shapes with no intersection
+                rays.update(closestShapes.vals[i],shapes[i]);
+            }
+        }
+
+    }
+    public boolean raysAreActive(){
+        // returns true if some rays are not consumed by a sensor, or boundary
+        return true; // give one iteration for now
     }
     public void plot(){
         // plots all objects within the scene onto the canvas for the user to see

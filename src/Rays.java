@@ -5,10 +5,10 @@ public class Rays {
     Matrix2d points; // coordinates of rays
     Matrix2d unit; // unit vectors of rays
     Matrix2d COB[]; // change of basis matrix
-    ArrayList<float[][]> pointsAcc; // accumulated points
-    ArrayList<float[][]> unitAcc; // accumulated unit vectors
-    ArrayList<float[][]> lengthsAcc; // accumulated lengths of each ray
-    ArrayList<float[][]> origins; // index of ray in lengthsAcc
+    ArrayList<double[][]> pointsAcc; // accumulated points
+    ArrayList<double[][]> unitAcc; // accumulated unit vectors
+    ArrayList<double[][]> lengthsAcc; // accumulated lengths of each ray
+    ArrayList<double[][]> origins; // index of ray in lengthsAcc
     boolean[] inside; // whether an array is inside a shape
 
     public void addSources(){
@@ -16,8 +16,8 @@ public class Rays {
 
         // for now, create dummy rays for testing
         numRays = 3;
-        points = new Matrix2d(new float[][]{{0,1,2},{0,0,0},{0,0,0}});
-        unit = new Matrix2d(new float[][]{{0,0,0},{0,0,0},{1,1,1}});
+        points = new Matrix2d(new double[][]{{0,1,2},{0,0,0},{0,0,0}});
+        unit = new Matrix2d(new double[][]{{0,0,0},{0,0,0},{1,1,1}});
     }
     public void createNewBasis(){
         // creates non-unique basis for each ray where the third dimension

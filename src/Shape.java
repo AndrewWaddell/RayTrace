@@ -1,10 +1,10 @@
 public class Shape {
-    float refractiveIndex;
+    double refractiveIndex;
     public Shape(Matrix2d points,Matrix2d connectivity){
         // creates shape with given triangles, default refractive index
         refractiveIndex = 1.52F;
     }
-    public Shape(Matrix2d points,Matrix2d connectivity,float refractiveIndexIn){
+    public Shape(Matrix2d points,Matrix2d connectivity,double refractiveIndexIn){
         // create shape with given triangles and refractive index
         refractiveIndex = refractiveIndexIn;
     }
@@ -63,7 +63,7 @@ public class Shape {
         // do they both point in the same direction?
         Matrix2d ACB = A.concatenateCol(C.concatenateCol(B));
         Matrix2d AQB = A.concatenateCol(Q.concatenateCol(B));
-        float ACBsa = ACB.signedArea(); // calculate only once
+        double ACBsa = ACB.signedArea(); // calculate only once
         if (ACBsa>0F){ // C points upwards
             if (AQB.signedArea()<=0F){ // Q points downwards or flat
                 return false; // Q is outside triangle

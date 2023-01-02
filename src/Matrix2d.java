@@ -4,8 +4,8 @@ public class Matrix2d {
     int[] size;
     int numRows;
     int numCols;
-    float[][] vals;
-    public Matrix2d(float[][] inputValues){
+    double[][] vals;
+    public Matrix2d(double[][] inputValues){
         vals = inputValues;
         numRows = vals.length;
         numCols = vals[0].length;
@@ -15,9 +15,9 @@ public class Matrix2d {
         size = emptySize;
         numRows = size[0];
         numCols = size[1];
-        vals = new float[numRows][numCols];
+        vals = new double[numRows][numCols];
     }
-    public void fillWithItem(float item) {
+    public void fillWithItem(double item) {
         for (int i = 0; i < numRows; i++) {
             for (int j = 0; j < numCols; j++) {
                 vals[i][j] = item;
@@ -53,7 +53,7 @@ public class Matrix2d {
         }
         return result;
     }
-    public Matrix2d multiplyBy(float value){
+    public Matrix2d multiplyBy(double value){
         // multiply each element in array by value, return output
         Matrix2d output = new Matrix2d(size);
         for (int i=0;i<numRows;i++){
@@ -127,10 +127,10 @@ public class Matrix2d {
         // I rotate all vectors about the x-axis
         // however if a vector is the x-axis, then I rotate it about the y-axis
 
-        Matrix2d Rx = new Matrix2d(new float[][]{{1,0,0},{0,0,-1},{0,1,0}}); // rotation matrix 90deg about x-axis
-        Matrix2d Ry = new Matrix2d(new float[][]{{0,0,1},{0,1,0},{-1,0,0}}); // rotation matrix 90deg about y-axis
+        Matrix2d Rx = new Matrix2d(new double[][]{{1,0,0},{0,0,-1},{0,1,0}}); // rotation matrix 90deg about x-axis
+        Matrix2d Ry = new Matrix2d(new double[][]{{0,0,1},{0,1,0},{-1,0,0}}); // rotation matrix 90deg about y-axis
 
-        boolean[] whereX = findCol(new float[]{1,0,0}); // find the index of all instances of x-axis in V
+        boolean[] whereX = findCol(new double[]{1,0,0}); // find the index of all instances of x-axis in V
         boolean[] whereNotX = new boolean[whereX.length]; // find index of all other vectors
         for (int i=0;i<whereX.length;i++){
             whereNotX[i] = !whereX[i];
@@ -149,7 +149,7 @@ public class Matrix2d {
 
         return rotated;
     }
-    public boolean[] findCol(float[] col){
+    public boolean[] findCol(double[] col){
         // for a series of column vectors, find those that equal col
         boolean[] found = new boolean[numCols];
         for (int j=0;j<numCols;j++){ // each vector
@@ -231,7 +231,7 @@ public class Matrix2d {
         // attach input matrix to the end of this matrix.
         // this matrix and input matrix have the same number of rows
         int newCols = numCols + inMat.numCols;
-        float[][] newArray = new float[numRows][newCols];
+        double[][] newArray = new double[numRows][newCols];
         for (int i=0;i<numRows;i++){
             System.arraycopy(vals[i],0,newArray[i],0,numCols);
         }
@@ -292,18 +292,18 @@ public class Matrix2d {
         }
         return maxIndex;
     }
-    public float signedArea(){
+    public double signedArea(){
         // signed area of 2D triangle A->B->C
         // this matrix contains each point in each column
         // calculated using determinant formula
         // also known as a ccw formula
 
         // return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
-        float term1 = (vals[0][1]-vals[0][0])*(vals[1][2]-vals[1][0]);
-        float term2 = (vals[0][2]-vals[0][0])*(vals[1][1]-vals[1][0]);
+        double term1 = (vals[0][1]-vals[0][0])*(vals[1][2]-vals[1][0]);
+        double term2 = (vals[0][2]-vals[0][0])*(vals[1][1]-vals[1][0]);
         return term1-term2;
     }
-    public float cosTheta(){
+    public double cosTheta(){
         // imagine triangle DEF
         // Angle DEF is theta, (about E)
         // each point D,E,F is a column in this matrix in order
@@ -323,11 +323,11 @@ public class Matrix2d {
         return (A.dot(B)/(A.magnitude()*B.magnitude()));
 
     }
-    public float dot(Matrix2d B){
+    public double dot(Matrix2d B){
         // dot product column vectors A,B
         // product = A dot B
         // this matrix is A
-        float product = 0;
+        double product = 0;
 
         if (numRows==1){
             if (B.numRows==1){
@@ -352,15 +352,13 @@ public class Matrix2d {
         }
         return product;
     }
-    public float magnitude(){
+    public double magnitude(){
         // length of column vector
         double radicand = 0;
         for (int i=0;i<numRows;i++){
             radicand += vals[i][0] * vals[i][0];
         }
-        double answerD = java.lang.Math.sqrt(radicand);
-        float answerF = (float)answerD;
-        return answerF;
+        return java.lang.Math.sqrt(radicand);
     }
     public Matrix2d inverse3by3(){
         // this matrix is of size 3x3
@@ -381,15 +379,15 @@ public class Matrix2d {
                     colIndex[k] = k!=j; // remove only this column
                 }
                 Matrix2d minorMatrix = rowRemoved.indexCol(colIndex);
-                cofactors.vals[i][j] = minorMatrix.det2by2() * (float)java.lang.Math.pow(-1,i+j);
+                cofactors.vals[i][j] = minorMatrix.det2by2() * java.lang.Math.pow(-1,i+j);
             }
         }
         Matrix2d adjoint = cofactors.transpose();
         Matrix2d firstRow = this.indexRow(0);
-        float determinant = firstRow.dot(cofactors.indexRow(0));
+        double determinant = firstRow.dot(cofactors.indexRow(0));
         return adjoint.multiplyBy(1/determinant);
     }
-    public float det2by2(){
+    public double det2by2(){
         // find the determinant of a 2 x 2 matrix
         return ((vals[0][0]*vals[1][1]) - (vals[0][1]*vals[1][0]));
     }
@@ -398,7 +396,7 @@ public class Matrix2d {
         // normalise columns of matrix
         Matrix2d normalised = new Matrix2d(size);
         for (int j=0;j<numCols;j++){
-            float sum = 0;
+            double sum = 0;
             for (int i=0;i<numRows;i++){
                 sum += vals[i][j];
             }

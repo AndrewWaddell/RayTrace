@@ -2,7 +2,7 @@ public class Scene {
     //Source[] sources;
     Rays rays;
     Shape[] shapes;
-    float refractiveIndex = 1;
+    double refractiveIndex = 1;
     public void trace(){
         // Traces rays from sources to sensors until no rays are left
 
@@ -29,13 +29,13 @@ public class Scene {
         // each column is each line, and each row is each dimension x,y,z
         // for example the first lines goes between (0,0,1) and (3,1,0)
 
-        Matrix2d point1 = new Matrix2d(new float[][] {{0,1,5,3,4},{0,0,0,0,0},{1,1,0.5F,0,0}});
-        Matrix2d point2 = new Matrix2d(new float[][] {{3,4,2,6,7},{1,1,1,1,1},{0,0,0.5F,1,1}});
+        Matrix2d point1 = new Matrix2d(new double[][] {{0,1,5,3,4},{0,0,0,0,0},{1,1,0.5F,0,0}});
+        Matrix2d point2 = new Matrix2d(new double[][] {{3,4,2,6,7},{1,1,1,1,1},{0,0,0.5F,1,1}});
 
         // tip: access matrix values with point1.vals
 
         // to plot the surface, we plot R^2, plot however you want
-        // please use Matrix2d class instead of float[][]
+        // please use Matrix2d class instead of double[][]
         // I have done this stuff a few times in different languages, so I
         // can help with the process, e.g. grid of points, convert polar to cartesian etc
     }

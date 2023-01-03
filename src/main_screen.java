@@ -3,8 +3,8 @@ import java.awt.*;
 // import javax.imageio.*;
 import javax.swing.*;
 
-public class main_screen {
-    public void GUI() {
+public class MainScreen {
+    public MainScreen() {
         // Frame and panels setup
         JFrame frame = new JFrame();
 

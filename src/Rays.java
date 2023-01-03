@@ -41,7 +41,7 @@ public class Rays {
         // update location and direction of rays at given index to intersecting given shape
         // saves existing values into accumulated list arrays before overwriting values
         // checks if rays have hit a blocker
-        
+
 
     }
 }

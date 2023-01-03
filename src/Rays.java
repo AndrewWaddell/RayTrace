@@ -12,13 +12,16 @@ public class Rays {
     ArrayList<double[][]> origins; // index of ray in lengthsAcc
     boolean[] inside; // whether an array is inside a shape
 
-    public void addSources(){
-        // builds rays based on all sources in the scene
-
-        // for now, create dummy rays for testing
-        numRays = 3;
-        points = new Matrix2d(new double[][]{{0,1,2},{0,0,0},{0,0,0}});
-        unit = new Matrix2d(new double[][]{{0,0,0},{0,0,0},{1,1,1}});
+    public void combineSources(ArrayList<Source> sources){
+        // builds a single instance of rays based on all sources in the scene
+        numRays = 0;
+        points = new Matrix2d(new int[]{3,0});
+        unit = new Matrix2d(new int[]{3,0});
+        for (Source source : sources){
+             numRays += source.points.numCols;
+             points.concatenateCol(source.points);
+             unit.concatenateCol(source.unit);
+        }
     }
     public void createNewBasis(){
         // creates non-unique basis for each ray where the third dimension

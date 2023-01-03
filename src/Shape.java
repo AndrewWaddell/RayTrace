@@ -1,15 +1,28 @@
 public class Shape {
     double refractiveIndex;
-    public Shape(Matrix2d points,Matrix2d connectivity){
+    Matrix2d points;
+    Matrix2d connectivity;
+    public Shape(Matrix2d pointsIn,Matrix2d connectivityIn){
         // creates shape with given triangles, default refractive index
         refractiveIndex = 1.52F;
+        points = pointsIn;
+        connectivity = connectivityIn;
     }
-    public Shape(Matrix2d points,Matrix2d connectivity,double refractiveIndexIn){
+    public Shape(Matrix2d pointsIn,Matrix2d connectivityIn,double refractiveIndexIn){
         // create shape with given triangles and refractive index
         refractiveIndex = refractiveIndexIn;
+        points = pointsIn;
+        connectivity = connectivityIn;
     }
     public Shape(String filename){
         // import shape from mesh file
+        refractiveIndex = 1.52F;
+    }
+    public Shape(){
+        //creates default shape for testing
+        refractiveIndex = 1.52F;
+        points = new Matrix2d(new double[][]{{1.5,1.5,0,5},{1,-1,1,1},{1,1,0.5,6}});
+        connectivity = new Matrix2d(new double[][]{{0,1,2},{0,1,3}}); // each triangle in each row
     }
     public boolean traceLowRes(){
         // Does any ray intersect with this shape?

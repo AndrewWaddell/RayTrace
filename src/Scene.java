@@ -1,15 +1,19 @@
+import java.util.ArrayList;
+
 public class Scene {
     //Source[] sources;
     Rays rays;
-    Shape[] shapes;
+    ArrayList<Source> sources = new ArrayList<Source>();
+    ArrayList<Shape> shapes = new ArrayList<Shape>();
     double refractiveIndex = 1;
-    public void trace(){
+
+    public void trace(int loopLimit){
         // Traces rays from sources to sensors until no rays are left
 
-        Rays rays = new Rays();
-        rays.addSources();
-        int looplimit = 1; // prevents closed loop mirror bouncing
-        for (int i=0;i<looplimit;i++){
+        rays = new Rays();
+        rays.combineSources(sources);
+
+        for (int i=0;i<loopLimit;i++){ // prevents closed loop bouncing
             if (raysAreActive()){
                 traceStep();
             }
@@ -19,17 +23,17 @@ public class Scene {
     public void traceStep(){
         // executes a single step within the trace. All rays bounce to the next shape.
         rays.createNewBasis();
-        Matrix2d distance = new Matrix2d(new int[]{shapes.length, rays.numRays}); // each ray,shape, distance
+        Matrix2d distance = new Matrix2d(new int[]{shapes.size(), rays.numRays}); // each ray,shape, distance
         distance.fillWithItem(Double.POSITIVE_INFINITY); // assume ray doesn't intersect with shape
-        for (int i=0;i<shapes.length;i++){
-            if (shapes[i].traceLowRes()){
-                distance.vals[i] = shapes[i].traceDistance(rays);
+        for (int i=0;i<shapes.size();i++){
+            if (shapes.get(i).traceLowRes()){
+                distance.vals[i] = shapes.get(i).traceDistance(rays);
             }
         }
         BooleanArray closestShapes = distance.minCol(); // for each ray, which shape intersection is the closest?
-        for (int i=0;i<shapes.length;i++){
+        for (int i=0;i<shapes.size();i++){
             if (!closestShapes.allFalseRow(i)){ // skip shapes with no intersection
-                rays.update(closestShapes.vals[i],shapes[i]);
+                rays.update(closestShapes.vals[i],shapes.get(i));
             }
         }
 

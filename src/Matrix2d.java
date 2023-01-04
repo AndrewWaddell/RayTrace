@@ -1,4 +1,4 @@
-
+import java.util.Arrays;
 
 public class Matrix2d {
     int[] size;
@@ -227,6 +227,12 @@ public class Matrix2d {
             }
         }
     }
+    public void insertCol(Matrix2d inMat,int j){
+        // inserts column vector inMat into this at column index j
+        for (int i=0;i<numRows;i++){
+            vals[i][j] = inMat.vals[0][j];
+        }
+    }
     public Matrix2d concatenateCol(Matrix2d inMat){
         // attach input matrix to the end of this matrix.
         // this matrix and input matrix have the same number of rows
@@ -411,5 +417,18 @@ public class Matrix2d {
         // sets these to true, the rest to false in
         // output array, which is same shape as input matrix
         return new BooleanArray(new boolean[][]{});
+    }
+    public double[] minMaxRow(int i){
+        // at row i, return the minimum and maximum number {min,max}
+        double[] sorted = vals[i].clone();
+        Arrays.sort(sorted);
+        return new double[]{sorted[0],sorted[numCols-1]};
+    }
+    public Matrix2d sortIndexRow(int i){
+        // sorts the matrix row at row index i
+        // instead of returning the sorted row,
+        // return a sequence containing indices of the original elements
+        // from the smallest to largest
+        return this; // does nothing yet
     }
 }

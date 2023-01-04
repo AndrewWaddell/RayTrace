@@ -4,7 +4,8 @@ public class Rays {
     int numRays; // number of rays
     Matrix2d points; // coordinates of rays
     Matrix2d unit; // unit vectors of rays
-    Matrix2d COB[]; // change of basis matrix
+    Matrix2d[] COB; // change of basis matrix
+    Matrix2d pointsCOB; // points in terms of the change of basis
     boolean[] blocked; // has each ray hit a blocker?
     ArrayList<double[][]> pointsAcc; // accumulated points
     ArrayList<double[][]> unitAcc; // accumulated unit vectors
@@ -48,6 +49,10 @@ public class Rays {
             P[i] = orth1i.concatenateCol(orth2i.concatenateCol(uniti));
             Matrix2d INV = P[i].inverse3by3();
             COB[i] = INV.normCol();
+        }
+        // now find the points in terms of the new basis
+        for (int i=0;i<numRays;i++){
+            pointsCOB.insertCol(points.multiply(COB[i]),i);
         }
     }
     public void update(boolean[] index, Shape shape){

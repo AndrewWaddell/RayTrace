@@ -15,12 +15,22 @@ public class Rays {
     public void combineSources(ArrayList<Source> sources){
         // builds a single instance of rays based on all sources in the scene
         numRays = 0;
-        points = new Matrix2d(new int[]{3,0});
-        unit = new Matrix2d(new int[]{3,0});
         for (Source source : sources){
              numRays += source.points.numCols;
-             points.concatenateCol(source.points);
-             unit.concatenateCol(source.unit);
+        }
+        points = new Matrix2d(new int[]{3,numRays});
+        unit = new Matrix2d(new int[]{3,numRays});
+        int pointer = 0;
+        for (int i=0;i< sources.size();i++){
+            for (int j=0;j<3;j++) {
+                System.arraycopy(
+                        sources.get(i).points.vals[j],
+                        0,
+                        points.vals[j],
+                        pointer,
+                        sources.get(i).points.numCols
+                );
+            }
         }
     }
     public void createNewBasis(){

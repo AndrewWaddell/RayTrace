@@ -37,13 +37,27 @@ public class Shape {
         }
     }
     public boolean traceLowRes(Rays rays){
-        // Does any ray intersect with this shape?
-        // Don't waste time tracing if no rays intersect
-        double[] xMinMax = points.minMaxRow(0);
-        double[] yMinMax = points.minMaxRow(1);
-        double[] zMinMax = points.minMaxRow(2);
-        // or is this pointscob?
-        return true; //placeholder
+        // Does any ray intersect with (or nearby) this shape?
+        // Don't waste time tracing if rays aren't even nearby
+        double[] xMinMax;
+        double[] yMinMax;
+        double xCoord;
+        double yCoord;
+        for (int i=0;i<rays.numRays;i++){
+            xCoord = rays.pointsCOB.vals[0][i];
+            yCoord = rays.pointsCOB.vals[1][i];
+            xMinMax = pointsCOB[i].minMaxRow(0);
+            yMinMax = pointsCOB[i].minMaxRow(1);
+            boolean xAboveMin = xCoord>=xMinMax[0];
+            boolean xBelowMax = xCoord<=xMinMax[1];
+            boolean yAboveMin = yCoord>=yMinMax[0];
+            boolean yBelowMax = yCoord<=yMinMax[1];
+            if (xAboveMin && xBelowMax && yAboveMin && yBelowMax){
+                return true; // if it works for one ray, we trace object.
+            }
+
+        }
+        return false;
     }
     public double[] traceDistance(Rays rays){
         // find the distance to each shape, for each ray

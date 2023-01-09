@@ -27,7 +27,7 @@ public class Scene {
         distance.fillWithItem(Double.POSITIVE_INFINITY); // assume ray doesn't intersect with shape
         for (int i=0;i<shapes.size();i++){
             shapes.get(i).changeOfBasis(rays);
-            if (shapes.get(i).traceLowRes()){
+            if (shapes.get(i).traceLowRes(rays)){
                 distance.vals[i] = shapes.get(i).traceDistance(rays);
             }
         }

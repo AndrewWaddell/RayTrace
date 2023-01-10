@@ -62,14 +62,19 @@ public class Shape {
     public double[] traceDistance(Rays rays){
         // find the distance to each shape, for each ray
         boolean[] xy = {true,true,false}; // ignore z dimension
-        BooleanArray interior = new BooleanArray(size?);
+        BooleanArray interior = new BooleanArray(new int[]{rays.numRays,connectivity.numRows}); // each ray triangle pair
         for (int i=0;i<rays.numRays;i++){
             for (int j=0;j<connectivity.numRows;j++){
-                interior.vals[I][I] = triangleInterior(
+                interior.vals[i][j] = triangleInterior(
                         pointsCOB[i].indexCol(connectivity.vals[j]).indexRow(xy),
                         rays.pointsCOB.indexRow(xy));
             }
         }
+        Matrix2d normals = triangleNormals(connectivity.indexRow(interior.orCol()));
+        // up to here
+        Matrix2d distance = new Matrix2d(interior.size);
+        distance.fillWithItem(Double.POSITIVE_INFINITY);
+
         return new double[]{0};
     }
     public boolean triangleInterior(Matrix2d points,Matrix2d Q){
@@ -148,5 +153,21 @@ public class Shape {
             return false;
         }
         return true; // query is bounded by both angles
+    }
+    public Matrix2d triangleNormals(Matrix2d triangles){
+        // determine the normal vector of the plane that 3 points sit on.
+        // input is a reduced form of connectivity where it only contains
+        // the triangles who have ray intersections.
+        // plane is spanned by two vectors: v1, v2
+        // v1 and v2 are built by connecting the points p
+        // cross product v1 and v2 to get answer
+        Matrix2d normals = new Matrix2d(new int[]{3,triangles.numRows});
+        for (int i=0;i<triangles.numRows;i++){
+            Matrix2d p = points.indexCol(triangles.vals[i]);
+            Matrix2d v1 = p.indexCol(2).subtract(p.indexCol(0));
+            Matrix2d v2 = p.indexCol(1).subtract(p.indexCol(0));
+            normals.insertCol(v1.cross(v2).normCol(),i);
+        }
+        return normals;
     }
 }

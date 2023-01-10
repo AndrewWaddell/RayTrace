@@ -1,7 +1,7 @@
 public class Shape {
     double refractiveIndex;
     Matrix2d points;
-    Matrix2d connectivity;
+    Matrix2d connectivity; // dim 1 = triangle, dim 2 = 3 points
     Matrix2d[] pointsCOB; // points in terms of new basis, for multiple basis sets
     public Shape(Matrix2d pointsIn,Matrix2d connectivityIn){
         // creates shape with given triangles, default refractive index
@@ -61,13 +61,22 @@ public class Shape {
     }
     public double[] traceDistance(Rays rays){
         // find the distance to each shape, for each ray
+        boolean[] xy = {true,true,false}; // ignore z dimension
+        BooleanArray interior = new BooleanArray(size?);
+        for (int i=0;i<rays.numRays;i++){
+            for (int j=0;j<connectivity.numRows;j++){
+                interior.vals[I][I] = triangleInterior(
+                        pointsCOB[i].indexCol(connectivity.vals[j]).indexRow(xy),
+                        rays.pointsCOB.indexRow(xy));
+            }
+        }
         return new double[]{0};
     }
     public boolean triangleInterior(Matrix2d points,Matrix2d Q){
         // determines whether query point Q is within the triangle
         // defined by points A,B,C forming each column (in any order)
         // first row is x-axis, second row, is y-axis
-        // query is 1 column
+        // query is 1 column, x&y rows
         // If query lies on edge, it is considered outside
 
         // Since many points will be outliers, I optimise by rejecting early.

@@ -191,6 +191,20 @@ public class Matrix2d {
         }
         return column;
     }
+    public Matrix2d indexCol(double[] index){
+        // output new matrix assembled with the columns of this matrix specified in index
+        // input must be integers, despite double type
+        Matrix2d output = new Matrix2d(new int[]{numRows,index.length});
+        int outputIndex = 0;
+        for (int i=0;i<numRows;i++){
+            for (double d : index){
+                int j = (int)d;
+                output.vals[i][outputIndex] = vals[i][j];
+                outputIndex++;
+            }
+        }
+        return output;
+    }
     public Matrix2d indexRow(boolean[] index){
         // return only rows specified true in index
         int outRows = 0; // number of rows in output

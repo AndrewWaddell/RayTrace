@@ -7,13 +7,13 @@ public class Rays {
     Matrix2d[] COB; // change of basis matrix
     Matrix2d pointsCOB; // points in terms of the change of basis
     boolean[] blocked; // has each ray hit a blocker?
-    ArrayList<double[][]> pointsAcc; // accumulated points
-    ArrayList<double[][]> unitAcc; // accumulated unit vectors
-    ArrayList<double[][]> lengthsAcc; // accumulated lengths of each ray
-    ArrayList<double[][]> origins; // index of ray in lengthsAcc
+    ArrayList<Matrix2d> pointsAcc; // accumulated points
+    ArrayList<Matrix2d> unitAcc; // accumulated unit vectors
+    ArrayList<Double> distancesAcc; // accumulated lengths of each ray
+    ArrayList<Integer> origins; // index of ray in lengthsAcc
     boolean[] inside; // whether an array is inside a shape
 
-    public void combineSources(ArrayList<Source> sources){
+    public Rays(ArrayList<Source> sources){
         // builds a single instance of rays based on all sources in the scene
         numRays = 0;
         for (Source source : sources){
@@ -21,6 +21,7 @@ public class Rays {
         }
         points = new Matrix2d(new int[]{3,numRays});
         unit = new Matrix2d(new int[]{3,numRays});
+        inside = new boolean[numRays];
         int pointer = 0;
         for (int i=0;i< sources.size();i++){
             for (int j=0;j<3;j++) {
@@ -32,6 +33,12 @@ public class Rays {
                         sources.get(i).points.numCols
                 );
             }
+        }
+        pointsAcc.add(points);
+        unitAcc.add(unit);
+        for (int i=0;i<numRays;i++){
+            distancesAcc.add(0F);
+            origins.add(i);
         }
     }
     public void createNewBasis(){
@@ -55,11 +62,33 @@ public class Rays {
             pointsCOB.insertCol(points.multiply(COB[i]),i);
         }
     }
-    public void update(boolean[] index, Shape shape){
-        // update location and direction of rays at given index to intersecting given shape
+    public void update(int i,double d, Matrix2d normal, double nShape, double nScene){
+        // update location and direction of ith ray upon intersection with a shape
+        // d is distance to the shape intersection
+        // normal is the normal of the shape the ray is intersecting
+        // if refractive index of shape (nShape) is 0, this means it is a mirror
+        // nScene is refractive index of atmosphere
+        //
         // saves existing values into accumulated list arrays before overwriting values
         // checks if rays have hit a blocker
-
-
+        points.insertCol(points.indexCol(i).add(unit.indexCol(i).multiplyBy(d)),i); // p = p + d*u
+        if (nShape>0){
+            unit.insertCol(refract(i,normal,nShape,nScene),i);
+            inside[i] = !inside[i];
+        } else {
+            unit.insertCol(reflect(i,normal),i);
+        }
+        pointsAcc.add(points.indexCol(i));
+        unitAcc.add(unit.indexCol(i));
+        distancesAcc.add(i,d);
+        distancesAcc.add(0D);
+    }
+    public Matrix2d reflect(int i,Matrix2d normal){
+        //
+        return new Matrix2d(new int[]{});
+    }
+    public Matrix2d refract(int i,Matrix2d normal,double nShape,double nScene){
+        //
+        return new Matrix2d(new int[]{});
     }
 }

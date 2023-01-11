@@ -8,6 +8,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/BooleanArray.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/BooleanArray.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Matrix2d.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Matrix2d.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Rays.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Rays.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Scene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Scene.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Shape.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Shape.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

@@ -1,7 +1,7 @@
 import javax.imageio.ImageTranscoder;
 
 public class Shape {
-    double refractiveIndex;
+    double refractiveIndex; // if 0, then it is a mirror.
     Matrix2d points;
     Matrix2d connectivity; // dim 1 = triangle, dim 2 = 3 points
     Matrix2d[] pointsCOB; // points in terms of new basis, for multiple basis sets
@@ -61,11 +61,14 @@ public class Shape {
         }
         return false;
     }
-    public double[] traceDistance(Rays rays){
+    public Matrix2d[] traceDistance(Rays rays){
         // find the distance to each shape, for each ray
+        // return two matrices (stored in the same output matrix array)
+        // the first matrix is a column vector that contains the distance to the closest triangle intersection
+        // the second matrix contains the corresponding normal vectors for that triangle. Each normal in each column
         boolean[] xy = {true,true,false}; // ignore z dimension
         BooleanArray interior = new BooleanArray(new int[]{rays.numRays,connectivity.numRows}); // each ray triangle pair
-        Matrix2d distance = new Matrix2d(interior.size);
+        Matrix2d distance = new Matrix2d(new int[]{rays.numRays,connectivity.numRows});
         distance.fillWithItem(Double.POSITIVE_INFINITY);
         for (int i=0;i<rays.numRays;i++){ // for ray
             for (int j=0;j<connectivity.numRows;j++){ // for triangle
@@ -83,7 +86,21 @@ public class Shape {
                 }
             }
         }
-        return distance.minCol();
+        BooleanArray closestTriangles = distance.minRowIndex();
+        Matrix2d shortestDistances = new Matrix2d(new int[]{rays.numRays,1});
+        Matrix2d correspondingNormals = new Matrix2d(new int[]{rays.numRays,3});
+        for (int i=0;i<rays.numRays;i++){
+            for (int j=0;j<connectivity.numRows;j++){
+                if (closestTriangles.vals[i][j]){
+                    shortestDistances.vals[i][0] = distance.vals[i][j];
+                    correspondingNormals.insertCol(triangleNormal(j),j);
+                }
+            }
+        }
+        Matrix2d[] output = new Matrix2d[2];
+        output[0] = shortestDistances;
+        output[1] = correspondingNormals;
+        return output;
     }
     public boolean triangleInterior(Matrix2d points,Matrix2d Q){
         // determines whether query point Q is within the triangle

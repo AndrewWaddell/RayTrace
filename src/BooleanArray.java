@@ -11,7 +11,9 @@ public class BooleanArray {
     public BooleanArray(int[] sizeIn){
         vals = new boolean[sizeIn[0]][sizeIn[1]];
         size = sizeIn;
-        Arrays.fill(vals,Boolean.FALSE);
+        for (int i=0;i<size[0];i++){
+            Arrays.fill(vals[i],Boolean.FALSE);
+        }
     }
     public boolean allFalseRow(int i){
         // every value along row i is false

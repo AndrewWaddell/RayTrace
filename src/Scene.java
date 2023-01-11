@@ -10,9 +10,7 @@ public class Scene {
     public void trace(int loopLimit){
         // Traces rays from sources to sensors until no rays are left
 
-        rays = new Rays();
-        rays.combineSources(sources);
-
+        rays = new Rays(sources);
         for (int i=0;i<loopLimit;i++){ // prevents closed loop bouncing
             if (raysAreActive()){
                 traceStep();
@@ -23,18 +21,28 @@ public class Scene {
     public void traceStep(){
         // executes a single step within the trace. All rays bounce to the next shape.
         rays.createNewBasis();
-        Matrix2d distance = new Matrix2d(new int[]{shapes.size(), rays.numRays}); // each ray->shape distance
+        Matrix2d distance = new Matrix2d(new int[]{rays.numRays,shapes.size()}); // each ray->shape distance
         distance.fillWithItem(Double.POSITIVE_INFINITY); // assume ray doesn't intersect with shape
+        Matrix2d[] normals = new Matrix2d[shapes.size()];
         for (int i=0;i<shapes.size();i++){
             shapes.get(i).changeOfBasis(rays);
             if (shapes.get(i).traceLowRes(rays)){
-                distance.vals[i] = shapes.get(i).traceDistance(rays);
+                Matrix2d[] distanceOutput = shapes.get(i).traceDistance(rays);
+                distance.insertCol(distanceOutput[0],i);
+                normals[i] = distanceOutput[1];
             }
         }
-        BooleanArray closestShapes = distance.minColIndex(); // for each ray, which shape intersection is the closest?
-        for (int i=0;i<shapes.size();i++){
-            if (!closestShapes.allFalseRow(i)){ // skip shapes with no intersection
-                rays.update(closestShapes.vals[i],shapes.get(i));
+        BooleanArray closestShapes = distance.minRowIndex(); // for each ray, which shape intersection is the closest?
+        for (int i=0;i<rays.numRays;i++){
+            for (int j=0;j<shapes.size();j++){
+                if(closestShapes.vals[i][j]){
+                    rays.update(
+                            i,
+                            distance.vals[i][j],
+                            normals[j].indexCol(i),
+                            shapes.get(j).refractiveIndex,
+                            refractiveIndex);
+                }
             }
         }
 

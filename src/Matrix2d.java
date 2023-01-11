@@ -306,20 +306,14 @@ public class Matrix2d {
         }
         return minIndex;
     }
-    public BooleanArray minColIndex(){
-        // finds the minimum value along each column
-        // sets these to true, the rest to false in
-        // output array, which is same shape as input matrix
-        return new BooleanArray(new boolean[][]{});
-    }
-    public double[] minCol(){
-        // finds the minimum value along each column, compressing results into a row vector
-        double[] min = new double[numCols];
-        Arrays.fill(min,Double.POSITIVE_INFINITY);
+    public Matrix2d minRow(){
+        // finds the minimum value along each row, compressing results into a column vector
+        Matrix2d min = new Matrix2d(new int[]{numCols,1});
+        min.fillWithItem(Double.POSITIVE_INFINITY);
         for (int i=0;i<numRows;i++){
             for (int j=0;j<numCols;j++){
-                if (vals[i][j]<min[j]){
-                    min[j] = vals[i][j];
+                if (vals[i][j]<min.vals[i][0]){
+                    min.vals[i][0] = vals[i][j];
                 }
             }
         }
@@ -334,6 +328,26 @@ public class Matrix2d {
             }
         }
         return maxIndex;
+    }
+    public BooleanArray minRowIndex(){
+        // finds the minimum value along each row
+        // sets these to true, the rest to false in output array
+        // assume there is only one minimum along each column
+        BooleanArray minRow = new BooleanArray(size);
+        for (int i=0;i<numRows;i++){
+            double min = Double.POSITIVE_INFINITY;
+            int minIndex = -1;
+            for (int j=0;j<numCols;j++){
+                if (vals[i][j]<min){
+                    min = vals[i][j];
+                    minIndex = j;
+                }
+            }
+            if (minIndex>0){
+                minRow.vals[i][minIndex] = true;
+            }
+        }
+        return minRow;
     }
     public double signedArea(){
         // signed area of 2D triangle A->B->C

@@ -31,7 +31,7 @@ public class Scene {
                 distance.vals[i] = shapes.get(i).traceDistance(rays);
             }
         }
-        BooleanArray closestShapes = distance.minCol(); // for each ray, which shape intersection is the closest?
+        BooleanArray closestShapes = distance.minColIndex(); // for each ray, which shape intersection is the closest?
         for (int i=0;i<shapes.size();i++){
             if (!closestShapes.allFalseRow(i)){ // skip shapes with no intersection
                 rays.update(closestShapes.vals[i],shapes.get(i));

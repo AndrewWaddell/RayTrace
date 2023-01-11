@@ -55,4 +55,17 @@ public class BooleanArray {
         }
         return cols;
     }
+    public boolean[] orRow(){
+        // does each row contain any true items
+        boolean[] rows = new boolean[size[0]];
+        for (int i=0;i<size[0];i++){
+            rows[i] = false;
+            for (int j=0;j<size[0];j++){
+                if (vals[i][j]){
+                    rows[i] = true;
+                }
+            }
+        }
+        return rows;
+    }
 }

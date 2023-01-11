@@ -1,3 +1,5 @@
+import javax.imageio.ImageTranscoder;
+
 public class Shape {
     double refractiveIndex;
     Matrix2d points;
@@ -63,19 +65,25 @@ public class Shape {
         // find the distance to each shape, for each ray
         boolean[] xy = {true,true,false}; // ignore z dimension
         BooleanArray interior = new BooleanArray(new int[]{rays.numRays,connectivity.numRows}); // each ray triangle pair
-        for (int i=0;i<rays.numRays;i++){
-            for (int j=0;j<connectivity.numRows;j++){
-                interior.vals[i][j] = triangleInterior(
-                        pointsCOB[i].indexCol(connectivity.vals[j]).indexRow(xy),
-                        rays.pointsCOB.indexRow(xy));
-            }
-        }
-        Matrix2d normals = triangleNormals(connectivity.indexRow(interior.orCol()));
-        // up to here
         Matrix2d distance = new Matrix2d(interior.size);
         distance.fillWithItem(Double.POSITIVE_INFINITY);
-
-        return new double[]{0};
+        for (int i=0;i<rays.numRays;i++){ // for ray
+            for (int j=0;j<connectivity.numRows;j++){ // for triangle
+                if (triangleInterior(
+                        pointsCOB[i].indexCol(connectivity.vals[j]).indexRow(xy),
+                        rays.pointsCOB.indexRow(xy))){
+                    double d = distanceLinePlane(
+                            points.indexCol(connectivity.vals[j][0]),
+                            rays.points.indexCol(i),
+                            triangleNormal(j),
+                            rays.unit.indexCol(i));
+                    if (d>0){ // remove intersection in the wrong direction
+                        distance.vals[i][j] = d;
+                    }
+                }
+            }
+        }
+        return distance.minCol();
     }
     public boolean triangleInterior(Matrix2d points,Matrix2d Q){
         // determines whether query point Q is within the triangle
@@ -154,20 +162,41 @@ public class Shape {
         }
         return true; // query is bounded by both angles
     }
-    public Matrix2d triangleNormals(Matrix2d triangles){
+    public Matrix2d triangleNormal(int i){
         // determine the normal vector of the plane that 3 points sit on.
-        // input is a reduced form of connectivity where it only contains
-        // the triangles who have ray intersections.
         // plane is spanned by two vectors: v1, v2
         // v1 and v2 are built by connecting the points p
-        // cross product v1 and v2 to get answer
-        Matrix2d normals = new Matrix2d(new int[]{3,triangles.numRows});
-        for (int i=0;i<triangles.numRows;i++){
-            Matrix2d p = points.indexCol(triangles.vals[i]);
-            Matrix2d v1 = p.indexCol(2).subtract(p.indexCol(0));
-            Matrix2d v2 = p.indexCol(1).subtract(p.indexCol(0));
-            normals.insertCol(v1.cross(v2).normCol(),i);
-        }
-        return normals;
+        // cross product v1 and v2 to get answer. Normalise normal.
+        Matrix2d p = points.indexCol(connectivity.vals[i]);
+        Matrix2d v1 = p.indexCol(2).subtract(p.indexCol(0));
+        Matrix2d v2 = p.indexCol(1).subtract(p.indexCol(0));
+        return v1.cross(v2).normCol();
+    }
+    public double distanceLinePlane(Matrix2d p0,Matrix2d l0,Matrix2d n,Matrix2d l){
+        // Find the distance from the ray at its current location to its intersection with the plane
+        //
+        // Line: set of points p where p = l0 + l*d
+        // l0 is a point on the line
+        // l is a unit vector in the direction of the line
+        // d is a scalar
+        //
+        // Plane: set of points p where dot( (p - p0) , n ) = 0
+        // n is normal to the plane
+        // p0 is a point on the plane
+        //
+        // Solve: substitute p line into p plane
+        // dot( ((l0 + l*d) - p0) , n ) = 0
+        // solve for d
+        // dot( ((l0 + l*d) - p0) , n ) = 0
+        // dot(l0-p0,n)=dot(-l*d,n)
+        // d = dot(p0-l0,n) / dot(l,n)
+        //
+        // If l is magnitude 1, then d will be distance from l0 to plane
+        // we choose l0 as current location of ray
+        // p0 as any of the triangle points. I choose point 1
+
+        double numerator = p0.subtract(l0).dot(n);
+        double denominator = l.dot(n);
+        return numerator/denominator;
     }
 }

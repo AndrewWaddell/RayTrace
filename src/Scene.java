@@ -12,7 +12,7 @@ public class Scene {
 
         rays = new Rays(sources);
         for (int i=0;i<loopLimit;i++){ // prevents closed loop bouncing
-            if (raysAreActive()){
+            if (rays.areActive()){
                 traceStep();
             }
         }
@@ -41,15 +41,12 @@ public class Scene {
                             distance.vals[i][j],
                             normals[j].indexCol(i),
                             shapes.get(j).refractiveIndex,
-                            refractiveIndex);
+                            refractiveIndex,
+                            shapes.get(i).BLOCKER);
                 }
             }
         }
 
-    }
-    public boolean raysAreActive(){
-        // returns true if some rays are not consumed by a sensor, or boundary
-        return true; // give one iteration for now
     }
     public void plot(){
         // plots all objects within the scene onto the canvas for the user to see

@@ -5,6 +5,7 @@ public class Shape {
     Matrix2d points;
     Matrix2d connectivity; // dim 1 = triangle, dim 2 = 3 points
     Matrix2d[] pointsCOB; // points in terms of new basis, for multiple basis sets
+    boolean BLOCKER = false; // stop tracing rays after intersection with this shape
     public Shape(Matrix2d pointsIn,Matrix2d connectivityIn){
         // creates shape with given triangles, default refractive index
         refractiveIndex = 1.52F;
@@ -17,13 +18,20 @@ public class Shape {
         points = pointsIn;
         connectivity = connectivityIn;
     }
+    public Shape(Matrix2d pointsIn,Matrix2d connectivityIn,boolean blocker){
+        // create (optional)blocker shape with given triangles
+        refractiveIndex = 1.52; // dummy value since direction will be calculated
+        BLOCKER = blocker;
+        points = pointsIn;
+        connectivity = connectivityIn;
+    }
     public Shape(String filename){
         // import shape from mesh file
-        refractiveIndex = 1.52F;
+        refractiveIndex = 1.52;
     }
     public Shape(){
         //creates default shape for testing
-        refractiveIndex = 1.52F;
+        refractiveIndex = 1.52;
         points = new Matrix2d(new double[][]{{1.5,1.5,0,5},{1,-1,1,1},{1,1,0.5,6}});
         connectivity = new Matrix2d(new double[][]{{0,1,2},{0,1,3}}); // each triangle in each row
     }
@@ -54,7 +62,8 @@ public class Shape {
             boolean xBelowMax = xCoord<=xMinMax[1];
             boolean yAboveMin = yCoord>=yMinMax[0];
             boolean yBelowMax = yCoord<=yMinMax[1];
-            if (xAboveMin && xBelowMax && yAboveMin && yBelowMax){
+            boolean rayActive = !rays.blocked[i];
+            if (xAboveMin && xBelowMax && yAboveMin && yBelowMax && rayActive){
                 return true; // if it works for one ray, we trace object.
             }
 
@@ -72,16 +81,18 @@ public class Shape {
         distance.fillWithItem(Double.POSITIVE_INFINITY);
         for (int i=0;i<rays.numRays;i++){ // for ray
             for (int j=0;j<connectivity.numRows;j++){ // for triangle
-                if (triangleInterior(
-                        pointsCOB[i].indexCol(connectivity.vals[j]).indexRow(xy),
-                        rays.pointsCOB.indexRow(xy))){
-                    double d = distanceLinePlane(
-                            points.indexCol(connectivity.vals[j][0]),
-                            rays.points.indexCol(i),
-                            triangleNormal(j),
-                            rays.unit.indexCol(i));
-                    if (d>0){ // remove intersection in the wrong direction
-                        distance.vals[i][j] = d;
+                if (!rays.blocked[i]) {
+                    if (triangleInterior(
+                            pointsCOB[i].indexCol(connectivity.vals[j]).indexRow(xy),
+                            rays.pointsCOB.indexRow(xy))) {
+                        double d = distanceLinePlane(
+                                points.indexCol(connectivity.vals[j][0]),
+                                rays.points.indexCol(i),
+                                triangleNormal(j),
+                                rays.unit.indexCol(i));
+                        if (d > 0) { // remove intersection in the wrong direction
+                            distance.vals[i][j] = d;
+                        }
                     }
                 }
             }

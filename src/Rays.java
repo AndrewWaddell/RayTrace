@@ -7,10 +7,10 @@ public class Rays {
     Matrix2d[] COB; // change of basis matrix
     Matrix2d pointsCOB; // points in terms of the change of basis
     boolean[] blocked; // has each ray hit a blocker?
-    ArrayList<Matrix2d> pointsAcc; // accumulated points
-    ArrayList<Matrix2d> unitAcc; // accumulated unit vectors
-    ArrayList<Double> distancesAcc; // accumulated lengths of each ray
-    ArrayList<Integer> origins; // index of ray in lengthsAcc
+    ArrayList<Matrix2d> pointsAcc = new ArrayList<>(); // accumulated points
+    ArrayList<Matrix2d> unitAcc = new ArrayList<>(); // accumulated unit vectors
+    ArrayList<Double> distancesAcc = new ArrayList<>(); // accumulated lengths of each ray
+    ArrayList<Integer> origins = new ArrayList<>(); // index of ray in lengthsAcc
     boolean[] inside; // whether an array is inside a shape
 
     public Rays(ArrayList<Source> sources){
@@ -37,9 +37,10 @@ public class Rays {
         pointsAcc.add(points);
         unitAcc.add(unit);
         for (int i=0;i<numRays;i++){
-            distancesAcc.add(0F);
+            distancesAcc.add(0D);
             origins.add(i);
         }
+        blocked = new boolean[numRays];
     }
     public void createNewBasis(){
         // creates non-unique basis for each ray where the third dimension
@@ -62,7 +63,7 @@ public class Rays {
             pointsCOB.insertCol(points.multiply(COB[i]),i);
         }
     }
-    public void update(int i,double d, Matrix2d normal, double nShape, double nScene){
+    public void update(int i,double d, Matrix2d normal, double nShape, double nScene, boolean blocker){
         // update location and direction of ith ray upon intersection with a shape
         // d is distance to the shape intersection
         // normal is the normal of the shape the ray is intersecting
@@ -82,13 +83,70 @@ public class Rays {
         unitAcc.add(unit.indexCol(i));
         distancesAcc.add(i,d);
         distancesAcc.add(0D);
+        blocked[i] = blocker;
     }
     public Matrix2d reflect(int i,Matrix2d normal){
-        //
-        return new Matrix2d(new int[]{});
+        // calculate mirror bounce of ray onto plane (defined by normal vector)
+        // Implement snell's law in vector form
+        // angle of incidence is theta1
+        // angle of reflection is theta2
+        // v_reflect = l + 2 cos(theta1) n
+        // l is the ray vector, n is the normal of the plane, pointing in the direction of the incoming ray
+        // n direction is flipped if n points wrong way at beginning
+        Matrix2d l = unit.indexCol(i).normCol();
+        Matrix2d n; // corrected normal pointing towards incoming ray
+        if (cosTheta1(l,normal)<0){ // cos(theta1) must be positive.
+            n = normal.multiplyBy(-1);
+        } else{
+            n = normal;
+        }
+        return l.add(n.multiplyBy(2*cosTheta1(l,n)));
     }
     public Matrix2d refract(int i,Matrix2d normal,double nShape,double nScene){
+        // implements snell's law for refraction at shape boundary, with plane defined by normal
+        // implemented in vector form
+        // angle of incidence is theta1
+        // angle of reflection is theta2
+        // ratio r of refractive indexes depends on whether we are entering or exiting shape (r = n1/n2)
+        // l is the ray vector, n is the normal of the plane, pointing in the direction of the incoming ray
+        // n direction is flipped if n points wrong way at beginning
         //
-        return new Matrix2d(new int[]{});
+        // v_refract = rl + (r*cos(theta1)-cos(theta2))n
+        Matrix2d l = unit.indexCol(i).normCol();
+        Matrix2d n; // corrected normal pointing towards incoming ray
+        if (cosTheta1(l,normal)<0){ // cos(theta1) must be positive.
+            n = normal.multiplyBy(-1);
+        } else{
+            n = normal;
+        }
+        double r;
+        if (inside[i]){
+            r = nShape/nScene;
+        } else{
+            r = nScene/nShape;
+        }
+        return l.multiplyBy(r).add(n.multiplyBy(r*cosTheta1(l,n)-cosTheta2(r,l,n)));
+    }
+    public double cosTheta1(Matrix2d l,Matrix2d n){
+        // cos of angle of incidence using the dot product:
+        // n is the normal of the plane (normalised)
+        // l is the unit vector of the ray (normalised)
+        // cos(theta1) = -n.l
+        return n.multiplyBy(-1).dot(l);
+    }
+    public double cosTheta2(double r,Matrix2d l,Matrix2d n){
+        // cos of angle of refraction
+        return Math.sqrt(1 - r*r * (1 - cosTheta1(l,n)*cosTheta1(l,n)));
+    }
+    public boolean areActive(){
+        // if there are any rays left that haven't hit a blocker, sensor or boundary,
+        // then return true
+        // once all rays have finished their journey, return false
+        for (boolean ray : blocked){
+            if (ray){
+                return true;
+            }
+        }
+        return false;
     }
 }

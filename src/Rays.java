@@ -32,7 +32,15 @@ public class Rays {
                         pointer,
                         sources.get(i).points.numCols
                 );
+                System.arraycopy(
+                        sources.get(i).unit.vals[j],
+                        0,
+                        unit.vals[j],
+                        pointer,
+                        sources.get(i).unit.numCols
+                );
             }
+            pointer += sources.get(i).points.numCols;
         }
         pointsAcc.add(points);
         unitAcc.add(unit);
@@ -59,8 +67,9 @@ public class Rays {
             COB[i] = INV.normCol();
         }
         // now find the points in terms of the new basis
+        pointsCOB = new Matrix2d(new int[]{3,numRays});
         for (int i=0;i<numRays;i++){
-            pointsCOB.insertCol(points.multiply(COB[i]),i);
+            pointsCOB.insertCol(COB[i].multiply(points.indexCol(i)),i);
         }
     }
     public void update(int i,double d, Matrix2d normal, double nShape, double nScene, boolean blocker){
@@ -142,8 +151,8 @@ public class Rays {
         // if there are any rays left that haven't hit a blocker, sensor or boundary,
         // then return true
         // once all rays have finished their journey, return false
-        for (boolean ray : blocked){
-            if (ray){
+        for (boolean block : blocked){
+            if (!block){
                 return true;
             }
         }

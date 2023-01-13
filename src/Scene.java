@@ -42,7 +42,7 @@ public class Scene {
                             normals[j].indexCol(i),
                             shapes.get(j).refractiveIndex,
                             refractiveIndex,
-                            shapes.get(i).BLOCKER);
+                            shapes.get(j).BLOCKER);
                 }
             }
         }

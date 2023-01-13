@@ -199,8 +199,9 @@ public class Matrix2d {
         // output new matrix assembled with the columns of this matrix specified in index
         // input must be integers, despite double type
         Matrix2d output = new Matrix2d(new int[]{numRows,index.length});
-        int outputIndex = 0;
+        int outputIndex; // output has potentially fewer columns than input
         for (int i=0;i<numRows;i++){
+            outputIndex = 0;
             for (double d : index){
                 int j = (int)d;
                 output.vals[i][outputIndex] = vals[i][j];
@@ -248,7 +249,7 @@ public class Matrix2d {
     public void insertCol(Matrix2d inMat,int j){
         // inserts column vector inMat into this at column index j
         for (int i=0;i<numRows;i++){
-            vals[i][j] = inMat.vals[0][j];
+            vals[i][j] = inMat.vals[i][0];
         }
     }
     public Matrix2d concatenateCol(Matrix2d inMat){
@@ -343,7 +344,7 @@ public class Matrix2d {
                     minIndex = j;
                 }
             }
-            if (minIndex>0){
+            if (minIndex>=0){
                 minRow.vals[i][minIndex] = true;
             }
         }
@@ -384,6 +385,8 @@ public class Matrix2d {
         // dot product column vectors A,B
         // product = A dot B
         // this matrix is A
+        // both vectors must have the same length
+        // vectors can be any row / column combination
         double product = 0;
 
         if (numRows==1){
@@ -398,11 +401,11 @@ public class Matrix2d {
             }
         } else {
             if (B.numRows==1){
-                for (int i=0;i<numCols;i++){
+                for (int i=0;i<numRows;i++){
                     product += vals[1][0] * B.vals[0][i];
                 }
             } else {
-                for (int i=0;i<numCols;i++){
+                for (int i=0;i<numRows;i++){
                     product += vals[i][0] * B.vals[i][0];
                 }
             }

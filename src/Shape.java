@@ -84,7 +84,7 @@ public class Shape {
                 if (!rays.blocked[i]) {
                     if (triangleInterior(
                             pointsCOB[i].indexCol(connectivity.vals[j]).indexRow(xy),
-                            rays.pointsCOB.indexRow(xy))) {
+                            rays.pointsCOB.indexCol(i).indexRow(xy))) {
                         double d = distanceLinePlane(
                                 points.indexCol(connectivity.vals[j][0]),
                                 rays.points.indexCol(i),
@@ -178,14 +178,15 @@ public class Shape {
         Matrix2d QAB = Q.concatenateCol(A.concatenateCol(B));
         Matrix2d CAB = C.concatenateCol(A.concatenateCol(B));
         // since each angle is within (0,90deg),
-        // comparing the cos of both angles == comparing both angles
-        if (QAB.cosTheta() > CAB.cosTheta()){
+        // comparing the cos of both angles will allow us to compare both angles
+        // cos is decreasing, to determine therefore QAB > CAB, we flip the sign
+        if (QAB.cosTheta() < CAB.cosTheta()){
             return false;
         }
         // second angle about B
         Matrix2d ABQ = A.concatenateCol(B.concatenateCol(Q));
         Matrix2d ABC = A.concatenateCol(B.concatenateCol(C));
-        if (ABQ.cosTheta() > ABC.cosTheta()){
+        if (ABQ.cosTheta() < ABC.cosTheta()){
             return false;
         }
         return true; // query is bounded by both angles
@@ -223,7 +224,7 @@ public class Shape {
         // we choose l0 as current location of ray
         // p0 as any of the triangle points. I choose point 1
 
-        double numerator = p0.subtract(l0).dot(n);
+        double numerator = n.dot(p0.subtract(l0));
         double denominator = l.dot(n);
         return numerator/denominator;
     }

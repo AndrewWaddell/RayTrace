@@ -42,8 +42,10 @@ public class Rays {
             }
             pointer += sources.get(i).points.numCols;
         }
-        pointsAcc.add(points.clone());
-        unitAcc.add(unit.clone());
+        for (int i=0;i<numRays;i++){
+            pointsAcc.add(points.indexCol(i));
+            unitAcc.add(unit.indexCol(i));
+        }
         for (int i=0;i<numRays;i++){
             distancesAcc.add(0D);
             origins.add(i);

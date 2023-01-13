@@ -33,6 +33,10 @@ public class Matrix2d {
             System.out.println();
         }
     }
+    public Matrix2d clone(){
+        // creates new version so that modifications to this don't change output
+        return new Matrix2d(vals.clone());
+    }
     public Matrix2d add(Matrix2d mat2){
         // result = this + mat2
         Matrix2d result = new Matrix2d(size);

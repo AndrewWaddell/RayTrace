@@ -42,8 +42,8 @@ public class Rays {
             }
             pointer += sources.get(i).points.numCols;
         }
-        pointsAcc.add(points);
-        unitAcc.add(unit);
+        pointsAcc.add(points.clone());
+        unitAcc.add(unit.clone());
         for (int i=0;i<numRays;i++){
             distancesAcc.add(0D);
             origins.add(i);
@@ -88,8 +88,8 @@ public class Rays {
         } else {
             unit.insertCol(reflect(i,normal),i);
         }
-        pointsAcc.add(points.indexCol(i));
-        unitAcc.add(unit.indexCol(i));
+        pointsAcc.add(points.indexCol(i).clone());
+        unitAcc.add(unit.indexCol(i).clone());
         distancesAcc.add(i,d);
         distancesAcc.add(0D);
         blocked[i] = blocker;

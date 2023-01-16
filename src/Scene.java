@@ -78,20 +78,19 @@ public class Scene {
         Matrix2d COBinv = new Matrix2d(new double[][]{{1,0,0},{0,1,0},{0,0,0}});
         COBinv.insertCol(camera.direction,2);
         Matrix2d COB = COBinv.inverse3by3();
-        for (int i=0; i<points3d[0].numCols;i++){
-            Matrix2d[] points2d = new Matrix2d[2];
-            for (int j=0;j<2;j++){
-                points2d[j] = new Matrix2d(new int[]{2,2});
+        for (int i=0; i<points3d[0].numCols;i++){ // which line
+            Matrix2d points2d = new Matrix2d(new int[]{2,2});
+            for (int j=0;j<2;j++){ // beginning and end
                 Matrix2d point3d = COB.multiply(points3d[j].indexCol(i).subtract(camera.location));
                 double z = point3d.indexRow(2).vals[0][0];
                 for (int k=0;k<2;k++) {
-                    points2d[j].insertCol(point3d.indexCol(k).multiplyBy(camera.invTanTheta / z), k);
+                    points2d.vals[j][k] = point3d.vals[k][0] * camera.invTanTheta / z;
                 }
             }
-            int x1 = (int)points2d[0].vals[0][0];
-            int y1 = (int)points2d[0].vals[1][0];
-            int x2 = (int)points2d[1].vals[0][0];
-            int y2 = (int)points2d[1].vals[1][0];
+            int x1 = (int)points2d.vals[0][0];
+            int y1 = (int)points2d.vals[1][0];
+            int x2 = (int)points2d.vals[0][1];
+            int y2 = (int)points2d.vals[1][1];
 
         }
 

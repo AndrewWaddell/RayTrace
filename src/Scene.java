@@ -59,8 +59,12 @@ public class Scene {
         // each column is each line, and each row is each dimension x,y,z
         // for example the first lines goes between (0,0,1) and (3,1,0)
 
-        Matrix2d point1 = new Matrix2d(new double[][] {{0,1,5,3,4},{0,0,0,0,0},{1,1,0.5F,0,0}});
-        Matrix2d point2 = new Matrix2d(new double[][] {{3,4,2,6,7},{1,1,1,1,1},{0,0,0.5F,1,1}});
+        Matrix2d[] points3d = new Matrix2d[2];
+        points3d[0] = new Matrix2d(new double[][] {{0,1,5,3,4},{0,0,0,0,0},{1,1,0.5F,0,0}});
+        points3d[1] = new Matrix2d(new double[][] {{3,4,2,6,7},{1,1,1,1,1},{0,0,0.5F,1,1}});
+        points3d[0].print();
+        System.out.println("------");
+        points3d[1].print();
 
         // tip: access matrix values with point1.vals
 
@@ -68,5 +72,29 @@ public class Scene {
         // please use Matrix2d class instead of double[][]
         // I have done this stuff a few times in different languages, so I
         // can help with the process, e.g. grid of points, convert polar to cartesian etc
+
+        Camera camera = new Camera();
+
+        Matrix2d COBinv = new Matrix2d(new double[][]{{1,0,0},{0,1,0},{0,0,0}});
+        COBinv.insertCol(camera.direction,2);
+        Matrix2d COB = COBinv.inverse3by3();
+        Matrix2d proj = new Matrix2d(new double[][]{});
+        for (int i=0; i<points3d[0].numCols;i++){
+            Matrix2d[] points2d = new Matrix2d[2];
+            for (int j=0;j<2;j++){
+                points2d[j] = new Matrix2d(new int[]{2,2});
+                Matrix2d point3d = COB.multiply(points3d[j].indexCol(i).subtract(camera.location));
+                double z = point3d.indexRow(2).vals[0][0];
+                for (int k=0;k<2;k++) {
+                    points2d[j].insertCol(point3d.indexCol(k).multiplyBy(camera.invTanTheta / z), k);
+                }
+            }
+            int x1 = (int)points2d[0].vals[0][0];
+            int y1 = (int)points2d[0].vals[1][0];
+            int x2 = (int)points2d[1].vals[0][0];
+            int y2 = (int)points2d[1].vals[1][0];
+            
+        }
+
     }
 }

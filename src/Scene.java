@@ -1,11 +1,15 @@
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
-public class Scene {
+public class Scene{
     //Source[] sources;
     Rays rays;
     ArrayList<Source> sources = new ArrayList<Source>();
     ArrayList<Shape> shapes = new ArrayList<Shape>();
     double refractiveIndex = 1;
+    int[][] points2DList;
 
     public void trace(int loopLimit){
         // Traces rays from sources to sensors until no rays are left
@@ -91,8 +95,14 @@ public class Scene {
             int y1 = (int)points2d.vals[1][0];
             int x2 = (int)points2d.vals[0][1];
             int y2 = (int)points2d.vals[1][1];
-
+            points2DList[i] = new int[] {x1, y1, x2, y2};
         }
+        System.out.println("Points to Plot");
+        System.out.println(Arrays.toString(points2DList[0]));
+        System.out.println(Arrays.toString(points2DList[1]));
+        System.out.println(Arrays.toString(points2DList[2]));
+        System.out.println(Arrays.toString(points2DList[3]));
+        System.out.println(Arrays.toString(points2DList[4]));
 
     }
 }

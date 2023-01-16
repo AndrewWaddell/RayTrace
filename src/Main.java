@@ -1,3 +1,5 @@
+import javax.swing.*;
+
 public class Main {
     public static void main(String[] args) {
 
@@ -14,8 +16,16 @@ public class Main {
 //            opticalBench.rays.unitAcc.get(i).print();
         }
         opticalBench.plot();
+        SwingUtilities.invokeLater(() -> createAndShowGUI(opticalBench.points2DList));
 
-//        MainScreen mainScreen = new MainScreen();
-
+    }
+    private static void createAndShowGUI(int[][] pointsToPlot) {
+        System.out.println("Created GUI on EDT? "+
+                SwingUtilities.isEventDispatchThread());
+        JFrame f = new JFrame("Ray Trace Application");
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.add(new MainPanel(pointsToPlot));
+        f.pack();
+        f.setVisible(true);
     }
 }

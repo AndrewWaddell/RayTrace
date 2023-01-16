@@ -78,7 +78,6 @@ public class Scene {
         Matrix2d COBinv = new Matrix2d(new double[][]{{1,0,0},{0,1,0},{0,0,0}});
         COBinv.insertCol(camera.direction,2);
         Matrix2d COB = COBinv.inverse3by3();
-        Matrix2d proj = new Matrix2d(new double[][]{});
         for (int i=0; i<points3d[0].numCols;i++){
             Matrix2d[] points2d = new Matrix2d[2];
             for (int j=0;j<2;j++){
@@ -93,7 +92,7 @@ public class Scene {
             int y1 = (int)points2d[0].vals[1][0];
             int x2 = (int)points2d[1].vals[0][0];
             int y2 = (int)points2d[1].vals[1][0];
-            
+
         }
 
     }

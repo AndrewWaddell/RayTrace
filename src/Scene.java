@@ -9,7 +9,7 @@ public class Scene{
     ArrayList<Source> sources = new ArrayList<Source>();
     ArrayList<Shape> shapes = new ArrayList<Shape>();
     double refractiveIndex = 1;
-    int[][] points2DList;
+    int[][] points2DList = new int[5][];
 
     public void trace(int loopLimit){
         // Traces rays from sources to sensors until no rays are left
